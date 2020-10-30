@@ -10,9 +10,13 @@ let package = Package(
         .library(name: "PackageFeedModel", targets: ["PackageFeedModel"]),
     ],
     dependencies: [
+        // FIXME: need semver
+        .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("main")),
     ],
     targets: [
-        .target(name: "PackageFeedModel", dependencies: []),
+        .target(name: "PackageFeedModel", dependencies: [
+            .product(name: "SwiftPMDataModel", package: "SwiftPM"),
+        ]),
 
         .testTarget(name: "PackageFeedModelTests", dependencies: ["PackageFeedModel"]),
     ]
