@@ -28,10 +28,11 @@ class PackageFeedModelTests: XCTestCase {
                     PackageFeed.Package.Version(
                         version: "1.3.2",
                         packageName: "Foobar",
-                        targets: [.init(name: "Foo")],
+                        targets: [.init(name: "Foo", moduleName: "Foo")],
                         products: [.init(name: "Bar", type: .library(.automatic), targets: ["Foo"])],
-                        supportedPlatforms: [.init(name: "macOS")],
-                        supportedSwiftVersions: ["5.2"],
+                        toolsVersion: "5.2",
+                        verifiedPlatforms: [.init(name: "macOS")],
+                        verifiedSwiftVersions: ["5.2"],
                         license: .init(name: "Apache-2.0", url: URL(string: "https://package-feed-tests.com/repos/foobar/LICENSE")!)
                     ),
                 ],

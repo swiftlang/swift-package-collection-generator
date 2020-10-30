@@ -103,11 +103,14 @@ extension PackageFeed.Package {
         /// Package version's products
         public let products: [Product]
 
-        /// Package version's supported platforms
-        public let supportedPlatforms: [Platform]?
+        /// The tools version used by the package version
+        public let toolsVersion: String
 
-        /// Package version's supported Swift versions
-        public let supportedSwiftVersions: [String]?
+        /// Package version's **verified** platforms
+        public let verifiedPlatforms: [Platform]?
+
+        /// Package version's **verified** Swift versions
+        public let verifiedSwiftVersions: [String]?
 
         /// Package version's license
         public let license: License?
@@ -118,16 +121,18 @@ extension PackageFeed.Package {
             packageName: String,
             targets: [Target],
             products: [Product],
-            supportedPlatforms: [Platform]? = nil,
-            supportedSwiftVersions: [String]? = nil,
+            toolsVersion: String,
+            verifiedPlatforms: [Platform]? = nil,
+            verifiedSwiftVersions: [String]? = nil,
             license: License? = nil
         ) {
             self.version = version
             self.packageName = packageName
             self.targets = targets
             self.products = products
-            self.supportedPlatforms = supportedPlatforms
-            self.supportedSwiftVersions = supportedSwiftVersions
+            self.toolsVersion = toolsVersion
+            self.verifiedPlatforms = verifiedPlatforms
+            self.verifiedSwiftVersions = verifiedSwiftVersions
             self.license = license
         }
     }
@@ -137,9 +142,13 @@ extension PackageFeed.Package {
         /// Target name
         public let name: String
 
+        /// The module name if this target can be imported as a module
+        public let moduleName: String?
+
         /// Creates a `Target`
-        public init(name: String) {
+        public init(name: String, moduleName: String? = nil) {
             self.name = name
+            self.moduleName = moduleName
         }
     }
 

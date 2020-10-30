@@ -38,13 +38,8 @@ A version object has metadata extracted from `Package.swift` and other sources:
 - `version`: The semantic version string.
 - `packageName`: The name of the package.
 - `targets`: An array of the package version's targets.
-
-```json
-{
-    "name": "MyTarget"
-}
-```
-
+  - `name`: The target's name.
+  - `moduleName`: The module name if this target can be imported as a module. *Optional*.
 - `products`: An array of the package version's products. A product object's `type`
 must have the same JSON serialization as SwiftPM's `PackageModel.ProductType`.
 
@@ -57,8 +52,8 @@ must have the same JSON serialization as SwiftPM's `PackageModel.ProductType`.
     "targets": ["MyTarget"]
 }
 ```
-
-- `supportedPlatforms`: An array of the package version's supported platforms,
+- `toolsVersion`: The tools version specified in `Package.swift`.
+- `verifiedPlatforms`: An array of the package version's **verified** platforms,
 e.g., `macOS`, `Linux`, etc. *Optional*.
 
 ```json
@@ -67,7 +62,7 @@ e.g., `macOS`, `Linux`, etc. *Optional*.
 }
 ```
 
-- `supportedSwiftVersions`: An array of the package version's supported Swift
+- `verifiedSwiftVersions`: An array of the package version's **verified** Swift
 versions. These must be semantic version strings. *Optional*.
 - `license`: The package version's license. *Optional*.
   - `name`: License name, e.g., `Apache-2.0`, `MIT`, etc.
