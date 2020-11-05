@@ -1,0 +1,3 @@
+import PackagesFeedGenerator
+
+PackagesFeedGenerate.main()

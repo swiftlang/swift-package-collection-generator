@@ -19,10 +19,10 @@ import XCTest
 @testable import PackageFeedModel
 
 class PackageFeedModelTests: XCTestCase {
-    func test_PackageFeed_Codable() throws {
+    func testCodable() throws {
         let packages = [
             PackageFeed.Package(
-                url: URL(string: "https://package-feed-tests.com/repos/foobar")!,
+                url: URL(string: "https://package-feed-tests.com/repos/foobar.git")!,
                 summary: "Package Foobar",
                 versions: [
                     PackageFeed.Package.Version(
