@@ -32,6 +32,9 @@ public struct PackageFeed: Equatable, Codable {
     /// The format version that the package feed conforms to
     public let formatVersion: FormatVersion
 
+    /// The revision number of this package feed
+    public let revision: Int?
+
     /// Timestamp at which the package feed was generated (ISO-8601 format)
     public let generatedAt: Date
 
@@ -42,6 +45,7 @@ public struct PackageFeed: Equatable, Codable {
         keywords: [String]? = nil,
         packages: [Package],
         formatVersion: FormatVersion,
+        revision: Int? = nil,
         generatedAt: Date = Date()
     ) {
         self.title = title
@@ -49,6 +53,7 @@ public struct PackageFeed: Equatable, Codable {
         self.keywords = keywords
         self.packages = packages
         self.formatVersion = formatVersion
+        self.revision = revision
         self.generatedAt = generatedAt
     }
 

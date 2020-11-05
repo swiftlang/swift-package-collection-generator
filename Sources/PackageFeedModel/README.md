@@ -7,41 +7,44 @@ packages for the first time and the cognitive overload of deciding which package
 a particular task. Enterprises may use feeds to narrow the decision space for their internal
 engineering teams, focusing them on a trusted set of vetted packages.
 
-## Create a Package Feed
+## Creating a Package Feed
 
 Package feeds are JSON documents and contain a list of packages and additional metadata per package.
 
 To begin, define the top-level metadata about the feed:
 
-- `title`: The name of the package feed.
-- `overview`: An overview of the packages that are included. *Optional*.
-- `keywords`: Keywords that the feed is associated with. *Optional*.
-- `formatVersion`: The version of the format to which the feed conforms. Currently, `1.0` is the
-only format version.
-- `generatedAt`: The ISO 8601-formatted datetime when the package feed was generated.
-- `packages`: An array of package objects.
+* `title`: The name of the package feed.
+* `overview`: An overview of the packages that are included. **Optional.**
+* `keywords`: An array of keywords that the feed is associated with. **Optional.**
+* `formatVersion`: The version of the format to which the feed conforms. Currently, `1.0` is the only allowed value.
+* `revision`: The revision number of this package feed. **Optional.**
+* `generatedAt`: The ISO 8601-formatted datetime string when the package feed was generated.
+* `packages`: An array of package objects.
 
-### Add Packages to the Feed
+
+#### Add packages to the feed
 
 Each item in the `packages` array is a package object with the following fields:
 
-- `url`: The URL of the package. Currently only Git repository URLs are supported.
-- `summary`: A summary or description of what the package does etc. *Optional*.
-- `readmeURL`: URL of the package's README. *Optional*.
-- `versions`: An array of version objects representing the most recent and/or
-relevant releases of the package.
+* `url`: The URL of the package. Currently only Git repository URLs are supported.
+* `summary`: A summary or description of the package. **Optional.**
+* `readmeURL`: The URL of the package's README. **Optional.**
+* `versions`: An array of version objects representing the most recent and/or relevant releases of the package.
 
-### Add Versions to a Package
 
-A version object has metadata extracted from `Package.swift` and other sources:
+#### Add versions to a package
 
-- `version`: The semantic version string.
-- `packageName`: The name of the package.
-- `targets`: An array of the package version's targets.
-  - `name`: The target's name.
-  - `moduleName`: The module name if this target can be imported as a module. *Optional*.
-- `products`: An array of the package version's products. A product object's `type`
-must have the same JSON serialization as SwiftPM's `PackageModel.ProductType`.
+A version object has metadata extracted from `Package.swift` and optionally additional metadata from other sources:
+
+* `version`: The semantic version string.
+* `packageName`: The name of the package.
+* `targets`: An array of the package version's targets.
+    * `name`: The target name.
+    * `moduleName`: The module name if this target can be imported as a module. **Optional.**
+* `products`: An array of the package version's products. 
+    * `name`: The product name.
+    * `type`: The product type. This must have the same JSON representation as SwiftPM's `PackageModel.ProductType`.
+    * `target`: An array of the product’s targets.
 
 ```json
 {
@@ -52,9 +55,9 @@ must have the same JSON serialization as SwiftPM's `PackageModel.ProductType`.
     "targets": ["MyTarget"]
 }
 ```
-- `toolsVersion`: The tools version specified in `Package.swift`.
-- `verifiedPlatforms`: An array of the package version's **verified** platforms,
-e.g., `macOS`, `Linux`, etc. *Optional*.
+
+* `toolsVersion`: The tools (semantic) version specified in `Package.swift`.
+* `verifiedPlatforms`: An array of the package version's **verified** platforms. Valid platform names include `macOS`, `iOS`, `tvOS`, `watchOS`, `Linux`, `Android`, and `Windows`. This is different from `platforms` in `Package.swift`. **Optional.**
 
 ```json
 {
@@ -62,8 +65,115 @@ e.g., `macOS`, `Linux`, etc. *Optional*.
 }
 ```
 
-- `verifiedSwiftVersions`: An array of the package version's **verified** Swift
-versions. These must be semantic version strings. *Optional*.
-- `license`: The package version's license. *Optional*.
-  - `name`: License name, e.g., `Apache-2.0`, `MIT`, etc.
-  - `url`: The URL of the license file.
+* `verifiedSwiftVersions`: An array of the package version's **verified** Swift versions. Values must be semantic version strings. This is different from `swiftLanguageVersions` in `Package.swift`. **Optional.**
+* `license`: The package version's license. **Optional.**
+    * `name`: License name. [SPDX identifier](https://spdx.org/licenses/) (e.g., `Apache-2.0`, `MIT`, etc.) preferred.
+    * `url`: The URL of the license file.
+
+
+#### Other requirements
+
+* A package feed can list a maximum of 50 packages. 
+* Package versions must be sorted in descending order.
+* Package versions must include at most two major versions and up to three minor version per major version.
+* The package feed JSON file must not exceed 100KB in size.
+
+
+## Example
+
+```json
+{
+  "title": "Sample Package Feed",
+  "overview": "This is a sample package feed listing made-up packages.",
+  "keywords": ["sample package feed"],
+  "formatVersion": "1.0",
+  "revision": 3,
+  "generatedAt": "2020-10-22T06:03:52Z",
+  "packages": [
+    {
+      "url": "https://www.example.com/repos/RepoOne.git",
+      "summary": "Package One",
+      "readmeURL": "https://www.example.com/repos/RepoOne/README",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "packageName": "PackageOne",
+          "targets": [
+            {
+              "name": "Foo",
+              "moduleName": "Foo"
+            }
+          ],
+          "products": [
+            {
+              "name": "Foo",
+              "type": {
+                "library": ["automatic"]
+              },
+              "targets": ["Foo"]
+            }
+          ],
+          "toolsVersion": "5.1",
+          "verifiedPlatforms": [
+            { "name": "macOS" },
+            { "name": "iOS" },
+            { "name": "Linux" }
+          ],
+          "verifiedSwiftVersions": ["5.1"],
+          "license": {
+            "name": "Apache-2.0",
+            "url": "https://www.example.com/repos/RepoOne/LICENSE"
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.example.com/repos/RepoTwo.git",
+      "summary": "Package Two",
+      "readmeURL": "https://www.example.com/repos/RepoTwo/README",
+      "versions": [
+        {
+          "version": "2.1.0",
+          "packageName": "PackageTwo",
+          "targets": [
+            {
+              "name": "Bar",
+              "moduleName": "Bar"
+            }
+          ],
+          "products": [
+            {
+              "name": "Bar",
+              "type": {
+                "library": ["automatic"]
+              },
+              "targets": ["Bar"]
+            }
+          ],
+          "toolsVersion": "5.2"
+        },
+        {
+          "version": "1.8.3",
+          "packageName": "PackageTwo",
+          "targets": [
+            {
+              "name": "Bar",
+              "moduleName": "Bar"
+            }
+          ],
+          "products": [
+            {
+              "name": "Bar",
+              "type": {
+                "library": ["automatic"]
+              },
+              "targets": ["Bar"]
+            }
+          ],
+          "toolsVersion": "5.0"
+        }        
+      ]
+    }
+  ]
+}
+```
