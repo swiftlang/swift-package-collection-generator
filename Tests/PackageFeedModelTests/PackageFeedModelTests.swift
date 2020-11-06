@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Packages Feed Generator open source project
+// This source file is part of the Swift Package Feed Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -19,10 +19,10 @@ import XCTest
 @testable import PackageFeedModel
 
 class PackageFeedModelTests: XCTestCase {
-    func test_PackageFeed_Codable() throws {
+    func testCodable() throws {
         let packages = [
             PackageFeed.Package(
-                url: URL(string: "https://package-feed-tests.com/repos/foobar")!,
+                url: URL(string: "https://package-feed-tests.com/repos/foobar.git")!,
                 summary: "Package Foobar",
                 versions: [
                     PackageFeed.Package.Version(
