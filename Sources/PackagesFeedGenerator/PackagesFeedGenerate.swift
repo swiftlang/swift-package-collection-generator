@@ -1,3 +1,17 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift Packages Feed Generator open source project
+//
+// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//===----------------------------------------------------------------------===//
+
 import ArgumentParser
 import Foundation
 import PackageFeedModel
@@ -108,11 +122,11 @@ public struct PackagesFeedGenerate: ParsableCommand {
                     if localFileSystem.exists(gitDirectoryPath) {
                         // If directory exists, assume it has been cloned previously
                         print("\(gitDirectoryPath) exists", inColor: .yellow, verbose: self.verbose)
-                        try self.gitFetch(repositoryURL, at: gitDirectoryPath)
+                        try GitUtilities.fetch(repositoryURL, at: gitDirectoryPath)
                     } else {
                         // Else clone it
                         print("\(gitDirectoryPath) does not exist", inColor: .yellow, verbose: self.verbose)
-                        try self.gitClone(repositoryURL, to: gitDirectoryPath)
+                        try GitUtilities.clone(repositoryURL, to: gitDirectoryPath)
                     }
 
                     return try self.generateMetadata(
@@ -127,7 +141,7 @@ public struct PackagesFeedGenerate: ParsableCommand {
         // Fallback to tmp directory if we cannot use the working directory for some reason or it's unspecified
         return try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
             // Clone the package repository
-            try self.gitClone(package.url.absoluteString, to: tmpDir)
+            try GitUtilities.clone(package.url.absoluteString, to: tmpDir)
 
             return try self.generateMetadata(
                 for: package,
@@ -184,11 +198,10 @@ public struct PackagesFeedGenerate: ParsableCommand {
 
         // Run `swift package describe --type json` to generate JSON package description
         let packageDescriptionJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package describe --type json")
-        // This is secondary data source so we allow errors
-        let packageDescription = try? jsonDecoder.decode(PackageDescription.self, from: packageDescriptionJSON.data(using: .utf8) ?? Data())
-        let targetModuleNames = packageDescription?.targets.reduce(into: [String: String]()) { result, target in
+        let packageDescription = try jsonDecoder.decode(PackageDescription.self, from: packageDescriptionJSON.data(using: .utf8) ?? Data())
+        let targetModuleNames = packageDescription.targets.reduce(into: [String: String]()) { result, target in
             result[target.name] = target.c99name
-        } ?? [:]
+        }
 
         let products: [PackageFeed.Package.Product] = manifest.products
             .filter { !excludedProducts.contains($0.name) }
@@ -222,18 +235,9 @@ public struct PackagesFeedGenerate: ParsableCommand {
         )
     }
 
-    private func gitClone(_ repositoryURL: String, to path: AbsolutePath) throws {
-        try ShellUtilities.run(Git.tool, "clone", repositoryURL, path.pathString)
-    }
-
-    private func gitFetch(_ repositoryURL: String, at gitDirectoryPath: AbsolutePath) throws {
-        try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "fetch")
-    }
-
     private func defaultVersions(for gitDirectoryPath: AbsolutePath) throws -> [String] {
         // List all the tags
-        let output = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "tag")
-        let tags = output.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        let tags = try GitUtilities.listTags(for: gitDirectoryPath)
         print("Tags: \(tags)", inColor: .yellow, verbose: self.verbose)
 
         // Sort tags in descending order (non-semver tags are excluded)
