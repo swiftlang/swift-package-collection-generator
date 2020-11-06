@@ -12,14 +12,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
-import TSCBasic
+import PackageCollectionGenerator
 
-public enum ShellUtilities {
-    public static let shell = ProcessInfo.processInfo.environment["PACKAGE_COLLECTION_GENERATOR_SHELL"] ?? "bash"
-
-    @discardableResult
-    public static func run(_ arguments: String...) throws -> String {
-        try Process.checkNonZeroExit(arguments: arguments)
-    }
-}
+PackageCollectionGenerate.main()

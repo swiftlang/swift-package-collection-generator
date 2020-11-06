@@ -1,17 +1,17 @@
 {
-  "title": "Test Package Feed",
-  "overview": "A test package feed",
+  "title": "Test Package Collection",
+  "overview": "A test package collection",
   "keywords": ["swift packages"],
   "packages": [
     {
-      "url": "https://package-feed-tests.com/repos/foobar.git",
+      "url": "https://package-collection-tests.com/repos/foobar.git",
       "summary": "Package Foobar",
       "versions": ["0.2.0", "0.1.0"],
       "excludedProducts": ["Foo"],
       "excludedTargets": ["Bar"]
     },
     {
-      "url": "https://package-feed-tests.com/repos/foobaz.git"
+      "url": "https://package-collection-tests.com/repos/foobaz.git"
     }
   ]
 }

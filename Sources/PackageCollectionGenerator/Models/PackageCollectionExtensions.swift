@@ -1,23 +1,23 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Package Feed Generator open source project
+// This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
 
-import PackageFeedModel
+import PackageCollectionModel
 
-extension PackageFeed: CustomStringConvertible {
+extension PackageCollection: CustomStringConvertible {
     public var description: String {
         """
-        PackageFeed {
+        PackageCollection {
             title=\(self.title),
             overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
@@ -30,7 +30,7 @@ extension PackageFeed: CustomStringConvertible {
     }
 }
 
-extension PackageFeed.Package: CustomStringConvertible {
+extension PackageCollection.Package: CustomStringConvertible {
     public var description: String {
         """
         PackageMetadata {
@@ -43,7 +43,7 @@ extension PackageFeed.Package: CustomStringConvertible {
     }
 }
 
-extension PackageFeed.Package.Version: CustomStringConvertible {
+extension PackageCollection.Package.Version: CustomStringConvertible {
     public var description: String {
         """
         Version {
@@ -60,7 +60,7 @@ extension PackageFeed.Package.Version: CustomStringConvertible {
     }
 }
 
-extension PackageFeed.Package.Target: CustomStringConvertible {
+extension PackageCollection.Package.Target: CustomStringConvertible {
     public var description: String {
         """
         Target(
@@ -71,7 +71,7 @@ extension PackageFeed.Package.Target: CustomStringConvertible {
     }
 }
 
-extension PackageFeed.Package.Product: CustomStringConvertible {
+extension PackageCollection.Package.Product: CustomStringConvertible {
     public var description: String {
         """
         Product(
@@ -83,13 +83,13 @@ extension PackageFeed.Package.Product: CustomStringConvertible {
     }
 }
 
-extension PackageFeed.Package.Platform: CustomStringConvertible {
+extension PackageCollection.Package.Platform: CustomStringConvertible {
     public var description: String {
         self.name
     }
 }
 
-extension PackageFeed.Package.License: CustomStringConvertible {
+extension PackageCollection.Package.License: CustomStringConvertible {
     public var description: String {
         "License(\(self.name), \(self.url))"
     }
