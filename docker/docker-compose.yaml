@@ -6,13 +6,13 @@ version: "3"
 services:
 
   runtime-setup:
-    image: swift-packages-feed-generator:default
+    image: swift-package-feed-generator:default
     build:
       context: .
       dockerfile: Dockerfile
 
   common: &common
-    image: swift-packages-feed-generator:default
+    image: swift-package-feed-generator:default
     depends_on: [runtime-setup]
     volumes:
       - ~/.ssh:/root/.ssh

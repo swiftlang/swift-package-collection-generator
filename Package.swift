@@ -3,13 +3,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-packages-feed-generator",
+    name: "swift-package-feed-generator",
     // Required for JSONEncoder/Decoder formatting and ISO-8601 support
     platforms: [.macOS(.v10_15)],
     products: [
         .library(name: "PackageFeedModel", targets: ["PackageFeedModel"]),
-        .library(name: "PackagesFeedGenerator", targets: ["PackagesFeedGenerator"]),
-        .executable(name: "packages-feed-generate", targets: ["PackagesFeedGeneratorExecutable"]),
+        .library(name: "PackageFeedGenerator", targets: ["PackageFeedGenerator"]),
+        .executable(name: "package-feed-generate", targets: ["PackageFeedGeneratorExecutable"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "0.3.0")),
@@ -24,12 +24,12 @@ let package = Package(
         .target(name: "PackageFeedModel", dependencies: [
             .product(name: "SwiftPMDataModel", package: "SwiftPM"),
         ]),
-        .target(name: "PackagesFeedGenerator", dependencies: [
+        .target(name: "PackageFeedGenerator", dependencies: [
             "PackageFeedModel",
             "Utilities",
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
         ]),
-        .target(name: "PackagesFeedGeneratorExecutable", dependencies: ["PackagesFeedGenerator"]),
+        .target(name: "PackageFeedGeneratorExecutable", dependencies: ["PackageFeedGenerator"]),
 
         .target(name: "TestUtilities", dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
@@ -37,9 +37,9 @@ let package = Package(
         ]),
 
         .testTarget(name: "PackageFeedModelTests", dependencies: ["PackageFeedModel"]),
-        .testTarget(name: "PackagesFeedGeneratorTests", dependencies: ["PackagesFeedGenerator"]),
-        .testTarget(name: "PackagesFeedGeneratorExecutableTests", dependencies: [
-            "PackagesFeedGeneratorExecutable",
+        .testTarget(name: "PackageFeedGeneratorTests", dependencies: ["PackageFeedGenerator"]),
+        .testTarget(name: "PackageFeedGeneratorExecutableTests", dependencies: [
+            "PackageFeedGeneratorExecutable",
             "TestUtilities",
         ]),
     ]

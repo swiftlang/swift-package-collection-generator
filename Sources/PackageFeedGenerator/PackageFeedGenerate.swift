@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Packages Feed Generator open source project
+// This source file is part of the Swift Package Feed Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -19,7 +19,7 @@ import TSCBasic
 import TSCUtility
 import Utilities
 
-public struct PackagesFeedGenerate: ParsableCommand {
+public struct PackageFeedGenerate: ParsableCommand {
     public static let configuration = CommandConfiguration(
         abstract: "Generate a package feed from the given list of packages."
     )
@@ -56,7 +56,7 @@ public struct PackagesFeedGenerate: ParsableCommand {
 
         // Get the list of packages to process
         let jsonDecoder = JSONDecoder()
-        let input = try jsonDecoder.decode(PackagesFeedGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
+        let input = try jsonDecoder.decode(PackageFeedGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
         print("\(input)", verbose: self.verbose)
 
         // Generate metadata for each package
@@ -102,7 +102,7 @@ public struct PackagesFeedGenerate: ParsableCommand {
     }
 
     private func generateMetadata(
-        for package: PackagesFeedGeneratorInput.Package,
+        for package: PackageFeedGeneratorInput.Package,
         jsonDecoder: JSONDecoder
     ) throws -> PackageFeed.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
@@ -152,7 +152,7 @@ public struct PackagesFeedGenerate: ParsableCommand {
     }
 
     private func generateMetadata(
-        for package: PackagesFeedGeneratorInput.Package,
+        for package: PackageFeedGeneratorInput.Package,
         gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
     ) throws -> PackageFeed.Package {

@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Packages Feed Generator open source project
+// This source file is part of the Swift Package Feed Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -16,23 +16,23 @@ import Foundation
 import TSCBasic
 import XCTest
 
-@testable import PackagesFeedGenerator
+@testable import PackageFeedGenerator
 
-class PackagesFeedGeneratorInputTests: XCTestCase {
+class PackageFeedGeneratorInputTests: XCTestCase {
     func testLoadFromFile() throws {
-        let expectedInput = PackagesFeedGeneratorInput(
+        let expectedInput = PackageFeedGeneratorInput(
             title: "Test Package Feed",
             overview: "A test package feed",
             keywords: ["swift packages"],
             packages: [
-                PackagesFeedGeneratorInput.Package(
+                PackageFeedGeneratorInput.Package(
                     url: URL(string: "https://package-feed-tests.com/repos/foobar.git")!,
                     summary: "Package Foobar",
                     versions: ["0.2.0", "0.1.0"],
                     excludedProducts: ["Foo"],
                     excludedTargets: ["Bar"]
                 ),
-                PackagesFeedGeneratorInput.Package(
+                PackageFeedGeneratorInput.Package(
                     url: URL(string: "https://package-feed-tests.com/repos/foobaz.git")!,
                     summary: nil,
                     versions: nil,
@@ -44,7 +44,7 @@ class PackagesFeedGeneratorInputTests: XCTestCase {
 
         let inputFilePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "test-input.json")
         let input = try JSONDecoder().decode(
-            PackagesFeedGeneratorInput.self,
+            PackageFeedGeneratorInput.self,
             from: Data(try localFileSystem.readFileContents(inputFilePath).contents)
         )
 
@@ -52,12 +52,12 @@ class PackagesFeedGeneratorInputTests: XCTestCase {
     }
 
     func testCodable() throws {
-        let input = PackagesFeedGeneratorInput(
+        let input = PackageFeedGeneratorInput(
             title: "Test Package Feed",
             overview: "A test package feed",
             keywords: ["swift packages"],
             packages: [
-                PackagesFeedGeneratorInput.Package(
+                PackageFeedGeneratorInput.Package(
                     url: URL(string: "https://package-feed-tests.com/repos/foobar.git")!,
                     summary: "Package Foobar",
                     versions: ["1.3.2"],
@@ -68,7 +68,7 @@ class PackagesFeedGeneratorInputTests: XCTestCase {
         )
 
         let data = try JSONEncoder().encode(input)
-        let decoded = try JSONDecoder().decode(PackagesFeedGeneratorInput.self, from: data)
+        let decoded = try JSONDecoder().decode(PackageFeedGeneratorInput.self, from: data)
         XCTAssertEqual(input, decoded)
     }
 }

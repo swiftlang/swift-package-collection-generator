@@ -1,4 +1,4 @@
-# Swift Packages Feed Generator
+# Swift Package Feed Generator
 
 A **package feed** is a curated list of packages and associated metadata which makes it 
 easier to discover an existing package for a particular use case. SwiftPM will allow users 

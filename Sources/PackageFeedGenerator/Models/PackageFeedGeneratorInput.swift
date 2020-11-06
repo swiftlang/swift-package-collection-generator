@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Packages Feed Generator open source project
+// This source file is part of the Swift Package Feed Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,8 +14,8 @@
 
 import Foundation
 
-/// Input for the `packages-feed-generate` command
-struct PackagesFeedGeneratorInput: Equatable, Codable, CustomStringConvertible {
+/// Input for the `package-feed-generate` command
+struct PackageFeedGeneratorInput: Equatable, Codable, CustomStringConvertible {
     /// The package feed's title
     let title: String
 
@@ -42,7 +42,7 @@ struct PackagesFeedGeneratorInput: Equatable, Codable, CustomStringConvertible {
 
     var description: String {
         """
-        PackagesFeedGeneratorInput {
+        PackageFeedGeneratorInput {
             title=\(self.title),
             overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
@@ -52,7 +52,7 @@ struct PackagesFeedGeneratorInput: Equatable, Codable, CustomStringConvertible {
     }
 }
 
-extension PackagesFeedGeneratorInput {
+extension PackageFeedGeneratorInput {
     /// Represents a package to be processed
     struct Package: Equatable, Codable, CustomStringConvertible {
         /// URL of the package. For now only Git repository URLs are supported.

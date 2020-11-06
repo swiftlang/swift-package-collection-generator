@@ -1,14 +1,14 @@
-# Packages Feed Generator
+# Package Feed Generator
 
 The feed generator downloads the sources of a given list of packages and extracts metadata from 
 package manifest for specific or most recent versions to construct a feed that can be consumed
 by SwiftPM.
 
 ```
-> swift run packages-feed-generate --help
+> swift run package-feed-generate --help
 OVERVIEW: Generate a package feed from the given list of packages.
 
-USAGE: packages-feed-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]
+USAGE: package-feed-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]
 
 ARGUMENTS:
   <input-path>            The path to the JSON document containing the list of packages to be processed 

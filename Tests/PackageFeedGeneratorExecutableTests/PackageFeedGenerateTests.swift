@@ -1,29 +1,29 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Packages Feed Generator open source project
+// This source file is part of the Swift Package Feed Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Packages Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Packages Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
 
 import Foundation
+@testable import PackageFeedGenerator
 import PackageFeedModel
-@testable import PackagesFeedGenerator
 @testable import TestUtilities
 import TSCBasic
 import TSCUtility
 import XCTest
 
-final class PackagesFeedGenerateTests: XCTestCase {
+final class PackageFeedGenerateTests: XCTestCase {
     func test_help() throws {
-        XCTAssert(try executeCommand(command: "packages-feed-generate --help")
-            .stdout.contains("USAGE: packages-feed-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]"))
+        XCTAssert(try executeCommand(command: "package-feed-generate --help")
+            .stdout.contains("USAGE: package-feed-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]"))
     }
 
     func test_endToEnd() throws {
@@ -50,26 +50,26 @@ final class PackagesFeedGenerateTests: XCTestCase {
             }
 
             // Prepare input.json
-            let input = PackagesFeedGeneratorInput(
+            let input = PackageFeedGeneratorInput(
                 title: "Test Package Feed",
                 overview: "A few test packages",
                 keywords: ["swift packages"],
                 packages: [
-                    PackagesFeedGeneratorInput.Package(
+                    PackageFeedGeneratorInput.Package(
                         url: URL(string: "https://package-feed-tests.com/repos/TestRepoOne.git")!,
                         summary: "Package Foo",
                         versions: nil,
                         excludedProducts: nil,
                         excludedTargets: nil
                     ),
-                    PackagesFeedGeneratorInput.Package(
+                    PackageFeedGeneratorInput.Package(
                         url: URL(string: "https://package-feed-tests.com/repos/TestRepoTwo.git")!,
                         summary: "Package Foo & Bar",
                         versions: nil,
                         excludedProducts: nil,
                         excludedTargets: nil
                     ),
-                    PackagesFeedGeneratorInput.Package(
+                    PackageFeedGeneratorInput.Package(
                         url: URL(string: "https://package-feed-tests.com/repos/TestRepoThree.git")!,
                         summary: "Package Baz",
                         versions: ["1.0.0"],
@@ -87,7 +87,7 @@ final class PackagesFeedGenerateTests: XCTestCase {
             // `tmpDir` is where we extract the repos so use it as the working directory so we won't actually doing any cloning
             let workingDirectoryPath = tmpDir
 
-            XCTAssert(try executeCommand(command: "packages-feed-generate --verbose \(inputFilePath.pathString) \(outputFilePath.pathString) --working-directory-path \(workingDirectoryPath.pathString)")
+            XCTAssert(try executeCommand(command: "package-feed-generate --verbose \(inputFilePath.pathString) \(outputFilePath.pathString) --working-directory-path \(workingDirectoryPath.pathString)")
                 .stdout.contains("Package feed saved to \(outputFilePath.pathString)"))
 
             let expectedPackages = [
