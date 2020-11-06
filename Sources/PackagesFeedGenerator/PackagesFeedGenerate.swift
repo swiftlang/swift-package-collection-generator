@@ -71,7 +71,9 @@ public struct PackagesFeedGenerate: ParsableCommand {
         jsonEncoder.dateEncodingStrategy = .iso8601
         if #available(macOS 10.15, *) {
             #if os(macOS)
-            jsonEncoder.outputFormatting = [.withoutEscapingSlashes]
+            jsonEncoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+            #else
+            jsonEncoder.outputFormatting = [.sortedKeys]
             #endif
         }
 

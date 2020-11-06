@@ -30,6 +30,8 @@ final class PackagesFeedGenerateTests: XCTestCase {
             if #available(macOS 10.15, *) {
                 #if os(macOS)
                 jsonEncoder.outputFormatting = [.withoutEscapingSlashes]
+                #else
+                jsonEncoder.outputFormatting = [.sortedKeys]
                 #endif
             }
 
