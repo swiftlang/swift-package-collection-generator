@@ -104,8 +104,8 @@ public struct PackagesFeedGenerate: ParsableCommand {
                     let repositoryName = String(repositoryURL[range])
                     print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
 
-                    let gitDirectoryPath = URL(fileURLWithPath: workingDirectoryPath).appendingPathComponent(repositoryName).path
-                    if localFileSystem.exists(AbsolutePath(gitDirectoryPath)) {
+                    let gitDirectoryPath = AbsolutePath(workingDirectoryPath).appending(component: repositoryName)
+                    if localFileSystem.exists(gitDirectoryPath) {
                         // If directory exists, assume it has been cloned previously
                         print("\(gitDirectoryPath) exists", inColor: .yellow, verbose: self.verbose)
                         try self.gitFetch(repositoryURL, at: gitDirectoryPath)
@@ -126,14 +126,12 @@ public struct PackagesFeedGenerate: ParsableCommand {
 
         // Fallback to tmp directory if we cannot use the working directory for some reason or it's unspecified
         return try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
-            let tmpDirPath = tmpDir.pathString
-
             // Clone the package repository
-            try self.gitClone(package.url.absoluteString, to: tmpDirPath)
+            try self.gitClone(package.url.absoluteString, to: tmpDir)
 
             return try self.generateMetadata(
                 for: package,
-                gitDirectoryPath: tmpDirPath,
+                gitDirectoryPath: tmpDir,
                 jsonDecoder: jsonDecoder
             )
         }
@@ -141,7 +139,7 @@ public struct PackagesFeedGenerate: ParsableCommand {
 
     private func generateMetadata(
         for package: PackagesFeedGeneratorInput.Package,
-        gitDirectoryPath: String,
+        gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
     ) throws -> PackageFeed.Package {
         // Select versions if none specified
@@ -173,12 +171,12 @@ public struct PackagesFeedGenerate: ParsableCommand {
         for version: String,
         excludedProducts: Set<String>,
         excludedTargets: Set<String>,
-        gitDirectoryPath: String,
+        gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
     ) throws -> PackageFeed.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
-        try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath, "checkout", version)
+        try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
 
         // Run `swift package dump-package` to generate JSON manifest from `Package.swift`
         let manifestJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package dump-package")
@@ -224,17 +222,17 @@ public struct PackagesFeedGenerate: ParsableCommand {
         )
     }
 
-    private func gitClone(_ repositoryURL: String, to path: String) throws {
-        try ShellUtilities.run(Git.tool, "clone", repositoryURL, path)
+    private func gitClone(_ repositoryURL: String, to path: AbsolutePath) throws {
+        try ShellUtilities.run(Git.tool, "clone", repositoryURL, path.pathString)
     }
 
-    private func gitFetch(_ repositoryURL: String, at gitDirectoryPath: String) throws {
-        try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath, "fetch")
+    private func gitFetch(_ repositoryURL: String, at gitDirectoryPath: AbsolutePath) throws {
+        try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "fetch")
     }
 
-    private func defaultVersions(for gitDirectoryPath: String) throws -> [String] {
+    private func defaultVersions(for gitDirectoryPath: AbsolutePath) throws -> [String] {
         // List all the tags
-        let output = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath, "tag")
+        let output = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "tag")
         let tags = output.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         print("Tags: \(tags)", inColor: .yellow, verbose: self.verbose)
 
