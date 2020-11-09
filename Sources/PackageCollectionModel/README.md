@@ -1,28 +1,28 @@
-# Package Feed
+# Package Collection
 
-Package feeds are short, curated lists of packages and associated metadata that can be imported
+Package collections are short, curated lists of packages and associated metadata that can be imported
 by SwiftPM to make package discovery easier. Educators and community influencers can publish
-package feeds to go along with course materials or blog posts, removing the friction of using
+package collections to go along with course materials or blog posts, removing the friction of using
 packages for the first time and the cognitive overload of deciding which packages are useful for
-a particular task. Enterprises may use feeds to narrow the decision space for their internal
+a particular task. Enterprises may use collections to narrow the decision space for their internal
 engineering teams, focusing them on a trusted set of vetted packages.
 
-## Creating a Package Feed
+## Creating a Package Collection
 
-Package feeds are JSON documents and contain a list of packages and additional metadata per package.
+Package collections are JSON documents and contain a list of packages and additional metadata per package.
 
-To begin, define the top-level metadata about the feed:
+To begin, define the top-level metadata about the collection:
 
-* `title`: The name of the package feed.
+* `title`: The name of the package collection.
 * `overview`: An overview of the packages that are included. **Optional.**
-* `keywords`: An array of keywords that the feed is associated with. **Optional.**
-* `formatVersion`: The version of the format to which the feed conforms. Currently, `1.0` is the only allowed value.
-* `revision`: The revision number of this package feed. **Optional.**
-* `generatedAt`: The ISO 8601-formatted datetime string when the package feed was generated.
+* `keywords`: An array of keywords that the collection is associated with. **Optional.**
+* `formatVersion`: The version of the format to which the collection conforms. Currently, `1.0` is the only allowed value.
+* `revision`: The revision number of this package collection. **Optional.**
+* `generatedAt`: The ISO 8601-formatted datetime string when the package collection was generated.
 * `packages`: An array of package objects.
 
 
-#### Add packages to the feed
+#### Add packages to the collection
 
 Each item in the `packages` array is a package object with the following fields:
 
@@ -73,19 +73,19 @@ A version object has metadata extracted from `Package.swift` and optionally addi
 
 #### Other requirements
 
-* A package feed can list a maximum of 50 packages. 
+* A package collection can list a maximum of 50 packages. 
 * Package versions must be sorted in descending order.
 * Package versions must include at most two major versions and up to three minor version per major version.
-* The package feed JSON file must not exceed 100KB in size.
+* The package collection JSON file must not exceed 100KB in size.
 
 
 ## Example
 
 ```json
 {
-  "title": "Sample Package Feed",
-  "overview": "This is a sample package feed listing made-up packages.",
-  "keywords": ["sample package feed"],
+  "title": "Sample Package Collection",
+  "overview": "This is a sample package collection listing made-up packages.",
+  "keywords": ["sample package collection"],
   "formatVersion": "1.0",
   "revision": 3,
   "generatedAt": "2020-10-22T06:03:52Z",

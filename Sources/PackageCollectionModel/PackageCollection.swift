@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Package Feed Generator open source project
+// This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -15,30 +15,30 @@
 import Foundation
 import PackageModel
 
-/// Package feed
-public struct PackageFeed: Equatable, Codable {
-    /// The package feed's title
+/// Package collection
+public struct PackageCollection: Equatable, Codable {
+    /// The package collection's title
     public let title: String
 
-    /// An overview or description of the package feed
+    /// An overview or description of the package collection
     public let overview: String?
 
-    /// Keywords associated with the package feed
+    /// Keywords associated with the package collection
     public let keywords: [String]?
 
     /// A list of packages (metadata)
     public let packages: [Package]
 
-    /// The format version that the package feed conforms to
+    /// The format version that the package collection conforms to
     public let formatVersion: FormatVersion
 
-    /// The revision number of this package feed
+    /// The revision number of this package collection
     public let revision: Int?
 
-    /// Timestamp at which the package feed was generated (ISO-8601 format)
+    /// Timestamp at which the package collection was generated (ISO-8601 format)
     public let generatedAt: Date
 
-    /// Creates a `PackageFeed`
+    /// Creates a `PackageCollection`
     public init(
         title: String,
         overview: String? = nil,
@@ -57,13 +57,13 @@ public struct PackageFeed: Equatable, Codable {
         self.generatedAt = generatedAt
     }
 
-    /// Representation of `PackageFeed` JSON schema version
+    /// Representation of `PackageCollection` JSON schema version
     public enum FormatVersion: String, Codable {
         case v1_0 = "1.0"
     }
 }
 
-extension PackageFeed {
+extension PackageCollection {
     /// Package metadata
     public struct Package: Equatable, Codable {
         /// URL of the package. For now only Git repository URLs are supported.
@@ -93,7 +93,7 @@ extension PackageFeed {
     }
 }
 
-extension PackageFeed.Package {
+extension PackageCollection.Package {
     /// Package version metadata
     public struct Version: Equatable, Codable {
         /// Semantic version string

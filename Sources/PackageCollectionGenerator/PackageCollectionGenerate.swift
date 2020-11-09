@@ -1,12 +1,12 @@
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Package Feed Generator open source project
+// This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
+// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,20 +14,20 @@
 
 import ArgumentParser
 import Foundation
-import PackageFeedModel
+import PackageCollectionModel
 import TSCBasic
 import TSCUtility
 import Utilities
 
-public struct PackageFeedGenerate: ParsableCommand {
+public struct PackageCollectionGenerate: ParsableCommand {
     public static let configuration = CommandConfiguration(
-        abstract: "Generate a package feed from the given list of packages."
+        abstract: "Generate a package collection from the given list of packages."
     )
 
     @Argument(help: "The path to the JSON document containing the list of packages to be processed")
     private var inputPath: String
 
-    @Argument(help: "The path to write the generated package feed to")
+    @Argument(help: "The path to write the generated package collection to")
     private var outputPath: String
 
     @Option(help:
@@ -41,7 +41,7 @@ public struct PackageFeedGenerate: ParsableCommand {
     )
     private var workingDirectoryPath: String?
 
-    @Option(help: "The revision number of the generated package feed")
+    @Option(help: "The revision number of the generated package collection")
     private var revision: Int?
 
     @Flag(name: .long, help: "Show extra logging for debugging purposes")
@@ -56,11 +56,11 @@ public struct PackageFeedGenerate: ParsableCommand {
 
         // Get the list of packages to process
         let jsonDecoder = JSONDecoder()
-        let input = try jsonDecoder.decode(PackageFeedGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
+        let input = try jsonDecoder.decode(PackageCollectionGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
         print("\(input)", verbose: self.verbose)
 
         // Generate metadata for each package
-        let packages: [PackageFeed.Package] = input.packages.compactMap { package in
+        let packages: [PackageCollection.Package] = input.packages.compactMap { package in
             do {
                 let packageMetadata = try self.generateMetadata(for: package, jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
@@ -70,8 +70,8 @@ public struct PackageFeedGenerate: ParsableCommand {
                 return nil
             }
         }
-        // Construct the package feed
-        let packageFeed = PackageFeed(
+        // Construct the package collection
+        let packageCollection = PackageCollection(
             title: input.title,
             overview: input.overview,
             keywords: input.keywords ?? [],
@@ -95,16 +95,16 @@ public struct PackageFeedGenerate: ParsableCommand {
         let outputDirectory = AbsolutePath(outputPath).parentDirectory
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
-        // Write the package feed
-        let jsonData = try jsonEncoder.encode(packageFeed)
+        // Write the package collection
+        let jsonData = try jsonEncoder.encode(packageCollection)
         try jsonData.write(to: URL(fileURLWithPath: self.outputPath))
-        print("Package feed saved to \(self.outputPath)", inColor: .cyan, verbose: self.verbose)
+        print("Package collection saved to \(self.outputPath)", inColor: .cyan, verbose: self.verbose)
     }
 
     private func generateMetadata(
-        for package: PackageFeedGeneratorInput.Package,
+        for package: PackageCollectionGeneratorInput.Package,
         jsonDecoder: JSONDecoder
-    ) throws -> PackageFeed.Package {
+    ) throws -> PackageCollection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -152,14 +152,14 @@ public struct PackageFeedGenerate: ParsableCommand {
     }
 
     private func generateMetadata(
-        for package: PackageFeedGeneratorInput.Package,
+        for package: PackageCollectionGeneratorInput.Package,
         gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
-    ) throws -> PackageFeed.Package {
+    ) throws -> PackageCollection.Package {
         // Select versions if none specified
         let versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
         // Load the manifest for each version and extract metadata
-        let packageVersions: [PackageFeed.Package.Version] = versions.compactMap { version in
+        let packageVersions: [PackageCollection.Package.Version] = versions.compactMap { version in
             do {
                 return try self.generateMetadata(
                     for: version,
@@ -173,7 +173,7 @@ public struct PackageFeedGenerate: ParsableCommand {
                 return nil
             }
         }
-        return PackageFeed.Package(
+        return PackageCollection.Package(
             url: package.url,
             summary: package.summary,
             versions: packageVersions,
@@ -187,7 +187,7 @@ public struct PackageFeedGenerate: ParsableCommand {
         excludedTargets: Set<String>,
         gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
-    ) throws -> PackageFeed.Package.Version {
+    ) throws -> PackageCollection.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
@@ -203,10 +203,10 @@ public struct PackageFeedGenerate: ParsableCommand {
             result[target.name] = target.c99name
         }
 
-        let products: [PackageFeed.Package.Product] = manifest.products
+        let products: [PackageCollection.Package.Product] = manifest.products
             .filter { !excludedProducts.contains($0.name) }
             .map { product in
-                PackageFeed.Package.Product(
+                PackageCollection.Package.Product(
                     name: product.name,
                     type: product.type,
                     targets: product.targets
@@ -218,11 +218,11 @@ public struct PackageFeedGenerate: ParsableCommand {
             result.append(contentsOf: targets.filter { !excludedTargets.contains($0) })
         })
 
-        return PackageFeed.Package.Version(
+        return PackageCollection.Package.Version(
             version: version,
             packageName: manifest.name,
             targets: manifest.targets.filter { publicTargets.contains($0.name) }.map { target in
-                PackageFeed.Package.Target(
+                PackageCollection.Package.Target(
                     name: target.name,
                     moduleName: targetModuleNames[target.name]
                 )

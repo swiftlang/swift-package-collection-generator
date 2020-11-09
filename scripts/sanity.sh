@@ -1,13 +1,13 @@
 #!/bin/bash
 ##===----------------------------------------------------------------------===##
 ##
-## This source file is part of the Swift Package Feed Generator open source project
+## This source file is part of the Swift Package Collection Generator open source project
 ##
-## Copyright (c) 2020 Apple Inc. and the Swift Package Feed Generator project authors
+## Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
 ## Licensed under Apache License v2.0
 ##
 ## See LICENSE.txt for license information
-## See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+## See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 ##
 ## SPDX-License-Identifier: Apache-2.0
 ##
@@ -22,18 +22,6 @@ function replace_acceptable_years() {
     sed -e 's/2017-2018/YEARS/' -e 's/2019-2020/YEARS/' -e 's/2019/YEARS/' -e 's/2020/YEARS/'
 }
 
-printf "=> Checking linux tests... "
-FIRST_OUT="$(git status --porcelain)"
-ruby "$here/../scripts/generate_linux_tests.rb" > /dev/null
-SECOND_OUT="$(git status --porcelain)"
-if [[ "$FIRST_OUT" != "$SECOND_OUT" ]]; then
-  printf "\033[0;31mmissing changes!\033[0m\n"
-  git --no-pager diff
-  exit 1
-else
-  printf "\033[0;32mokay.\033[0m\n"
-fi
-
 printf "=> Checking format... "
 FIRST_OUT="$(git status --porcelain)"
 swiftformat . > /dev/null 2>&1
@@ -47,7 +35,7 @@ else
 fi
 
 printf "=> Checking license headers\n"
-tmp=$(mktemp /tmp/.swift-package-feed-generator_XXXXXX)
+tmp=$(mktemp /tmp/.swift-package-collection-generator_XXXXXX)
 
 for language in swift-or-c bash dtrace; do
   printf "   * $language... "
@@ -62,13 +50,13 @@ for language in swift-or-c bash dtrace; do
         cat > "$tmp" <<"EOF"
 //===----------------------------------------------------------------------===//
 //
-// This source file is part of the Swift Package Feed Generator open source project
+// This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) YEARS Apple Inc. and the Swift Package Feed Generator project authors
+// Copyright (c) YEARS Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+// See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -81,13 +69,13 @@ EOF
 #!/bin/bash
 ##===----------------------------------------------------------------------===##
 ##
-## This source file is part of the Swift Package Feed Generator open source project
+## This source file is part of the Swift Package Collection Generator open source project
 ##
-## Copyright (c) YEARS Apple Inc. and the Swift Package Feed Generator project authors
+## Copyright (c) YEARS Apple Inc. and the Swift Package Collection Generator project authors
 ## Licensed under Apache License v2.0
 ##
 ## See LICENSE.txt for license information
-## See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+## See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
 ##
 ## SPDX-License-Identifier: Apache-2.0
 ##
@@ -100,13 +88,13 @@ EOF
 #!/usr/sbin/dtrace -q -s
 /*===----------------------------------------------------------------------===*
  *
- *  This source file is part of the Swift Package Feed Generator open source project
+ *  This source file is part of the Swift Package Collection Generator open source project
  *
- *  Copyright (c) YEARS Apple Inc. and the Swift Package Feed Generator project authors
+ *  Copyright (c) YEARS Apple Inc. and the Swift Package Collection Generator project authors
  *  Licensed under Apache License v2.0
  *
  *  See LICENSE.txt for license information
- *  See CONTRIBUTORS.txt for the list of Swift Package Feed Generator project authors
+ *  See CONTRIBUTORS.txt for the list of Swift Package Collection Generator project authors
  *
  *  SPDX-License-Identifier: Apache-2.0
  *

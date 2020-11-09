@@ -1,18 +1,18 @@
-# Package Feed Generator
+# Package Collection Generator
 
-The feed generator downloads the sources of a given list of packages and extracts metadata from 
-package manifest for specific or most recent versions to construct a feed that can be consumed
+The generator downloads the sources of a given list of packages and extracts metadata from 
+package manifest for specific or most recent versions to construct a collection that can be consumed
 by SwiftPM.
 
 ```
-> swift run package-feed-generate --help
-OVERVIEW: Generate a package feed from the given list of packages.
+> swift run package-collection-generate --help
+OVERVIEW: Generate a package collection from the given list of packages.
 
-USAGE: package-feed-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]
+USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]
 
 ARGUMENTS:
   <input-path>            The path to the JSON document containing the list of packages to be processed 
-  <output-path>           The path to write the generated package feed to 
+  <output-path>           The path to write the generated package collection to 
 
 OPTIONS:
   --working-directory-path <working-directory-path>
@@ -23,24 +23,24 @@ OPTIONS:
                           same name will end up in the same directory.
 
                           Temporary directories will be used instead if this argument is not specified. 
-  --revision <revision>   The revision number of the generated package feed 
+  --revision <revision>   The revision number of the generated package collection 
   --verbose               Show extra logging for debugging purposes 
   -h, --help              Show help information.
 ```
 
 ### System Requirements
 
-The feed generator requires Swift toolchains and Git.
+The generator requires Swift toolchains and Git to run.
 
 ## Input Format
 
-The input is a JSON document that contains metadata about the feed and lists the packages to be included.
+The input is a JSON document that contains metadata about the collection and lists the packages to be included.
 
-Feed metadata:
+Collection metadata:
 
-* `title`: The name of the package feed.
+* `title`: The name of the package collection.
 * `overview`: An overview of the packages that are included. **Optional.**
-* `keywords`: An array of keywords that the feed is associated with. **Optional.**
+* `keywords`: An array of keywords that the collection is associated with. **Optional.**
 * `packages`: An array of package objects.
 
 Each item in the `packages` array is a package object with the following fields:
@@ -55,9 +55,9 @@ Each item in the `packages` array is a package object with the following fields:
 
 ```json
 {
-  "title": "Sample Package Feed",
-  "overview": "This is a sample package feed listing made-up packages.",
-  "keywords": ["sample package feed"],
+  "title": "Sample Package Collection",
+  "overview": "This is a sample package collection listing made-up packages.",
+  "keywords": ["sample package collection"],
   "packages": [
     {
       "url": "https://www.example.com/repos/RepoOne.git",
