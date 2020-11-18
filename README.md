@@ -1,13 +1,10 @@
 # Swift Package Collection Generator
 
-A **package collection** is a curated list of packages and associated metadata which makes it 
-easier to discover an existing package for a particular use case. SwiftPM will allow users 
-to subscribe to package collections and make their contents accessible to any clients of libSwiftPM. 
+A **package collection** ([SE-0291](https://github.com/apple/swift-evolution/blob/main/proposals/0291-package-collections.md)) 
+is a curated list of packages and associated metadata which makes it easier to discover an existing package for a particular use 
+case. SwiftPM will allow users to subscribe to package collections and make their contents accessible to any clients of libSwiftPM.  
 
-[TODO: link to SwiftPM evolution proposal](https://forums.swift.org/t/package-collections/41522) 
-
-This repository provides a set of Swift packages and tooling for the generation
-and consumption of package collections.
+This repository provides a set of Swift packages and tooling for the generation and consumption of package collections.
 
 ## Package Collection Format
 
@@ -18,4 +15,4 @@ for details.
 ## Generating a Package Collection
 
 [`package-collection-generate`](Sources/PackageCollectionGenerator/README.md) is a Swift
-command-line tool that helps generate package collection.
+command-line tool that helps generate package collections.

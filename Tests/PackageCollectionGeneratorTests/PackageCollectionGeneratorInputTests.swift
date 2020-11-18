@@ -22,24 +22,23 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
     func testLoadFromFile() throws {
         let expectedInput = PackageCollectionGeneratorInput(
             title: "Test Package Collection",
-            overview: "A test package collection",
+            description: "A test package collection",
             keywords: ["swift packages"],
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
-                    summary: "Package Foobar",
+                    description: "Package Foobar",
+                    keywords: ["test package"],
                     versions: ["0.2.0", "0.1.0"],
                     excludedProducts: ["Foo"],
-                    excludedTargets: ["Bar"]
+                    excludedTargets: ["Bar"],
+                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
                 ),
                 PackageCollectionGeneratorInput.Package(
-                    url: URL(string: "https://package-collection-tests.com/repos/foobaz.git")!,
-                    summary: nil,
-                    versions: nil,
-                    excludedProducts: nil,
-                    excludedTargets: nil
+                    url: URL(string: "https://package-collection-tests.com/repos/foobaz.git")!
                 ),
-            ]
+            ],
+            author: .init(name: "Jane Doe")
         )
 
         let inputFilePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "test-input.json")
@@ -54,17 +53,20 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
     func testCodable() throws {
         let input = PackageCollectionGeneratorInput(
             title: "Test Package Collection",
-            overview: "A test package collection",
+            description: "A test package collection",
             keywords: ["swift packages"],
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
-                    summary: "Package Foobar",
+                    description: "Package Foobar",
+                    keywords: ["test package"],
                     versions: ["1.3.2"],
                     excludedProducts: ["Foo"],
-                    excludedTargets: ["Bar"]
+                    excludedTargets: ["Bar"],
+                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
                 ),
-            ]
+            ],
+            author: .init(name: "Jane Doe")
         )
 
         let data = try JSONEncoder().encode(input)

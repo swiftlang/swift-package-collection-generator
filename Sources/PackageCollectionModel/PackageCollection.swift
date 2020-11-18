@@ -15,47 +15,10 @@
 import Foundation
 import PackageModel
 
-/// Package collection
-public struct PackageCollection: Equatable, Codable {
-    /// The package collection's title
-    public let title: String
+public enum JSONPackageCollectionModel {}
 
-    /// An overview or description of the package collection
-    public let overview: String?
-
-    /// Keywords associated with the package collection
-    public let keywords: [String]?
-
-    /// A list of packages (metadata)
-    public let packages: [Package]
-
-    /// The format version that the package collection conforms to
-    public let formatVersion: FormatVersion
-
-    /// The revision number of this package collection
-    public let revision: Int?
-
-    /// Timestamp at which the package collection was generated (ISO-8601 format)
-    public let generatedAt: Date
-
-    /// Creates a `PackageCollection`
-    public init(
-        title: String,
-        overview: String? = nil,
-        keywords: [String]? = nil,
-        packages: [Package],
-        formatVersion: FormatVersion,
-        revision: Int? = nil,
-        generatedAt: Date = Date()
-    ) {
-        self.title = title
-        self.overview = overview
-        self.keywords = keywords
-        self.packages = packages
-        self.formatVersion = formatVersion
-        self.revision = revision
-        self.generatedAt = generatedAt
-    }
+extension JSONPackageCollectionModel {
+    public enum V1 {}
 
     /// Representation of `PackageCollection` JSON schema version
     public enum FormatVersion: String, Codable {
@@ -63,61 +26,147 @@ public struct PackageCollection: Equatable, Codable {
     }
 }
 
-extension PackageCollection {
-    /// Package metadata
+extension JSONPackageCollectionModel.V1 {
+    public struct PackageCollection: Equatable, Codable {
+        /// The name of the package collection, for display purposes only.
+        public let title: String
+
+        /// A description of the package collection.
+        public let _description: String?
+
+        /// An array of keywords that the collection is associated with.
+        public let keywords: [String]?
+
+        /// An array of package metadata objects
+        public let packages: [Package]
+
+        /// The version of the format to which the collection conforms.
+        public let formatVersion: JSONPackageCollectionModel.FormatVersion
+
+        /// The revision number of this package collection.
+        public let revision: Int?
+
+        /// The ISO 8601-formatted datetime string when the package collection was generated.
+        public let generatedAt: Date
+
+        /// The author of this package collection.
+        public let generatedBy: Author?
+
+        /// Creates a `PackageCollection`
+        public init(
+            title: String,
+            description: String? = nil,
+            keywords: [String]? = nil,
+            packages: [Package],
+            formatVersion: JSONPackageCollectionModel.FormatVersion,
+            revision: Int? = nil,
+            generatedAt: Date = Date(),
+            generatedBy: Author? = nil
+        ) {
+            precondition(formatVersion == .v1_0, "Unsupported format version: \(formatVersion)")
+
+            self.title = title
+            self._description = description
+            self.keywords = keywords
+            self.packages = packages
+            self.formatVersion = formatVersion
+            self.revision = revision
+            self.generatedAt = generatedAt
+            self.generatedBy = generatedBy
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case title
+            case _description = "description"
+            case keywords
+            case packages
+            case formatVersion
+            case revision
+            case generatedAt
+            case generatedBy
+        }
+
+        public struct Author: Equatable, Codable {
+            /// The author name.
+            public let name: String
+
+            /// Creates an `Author`
+            public init(name: String) {
+                self.name = name
+            }
+        }
+    }
+}
+
+extension JSONPackageCollectionModel.V1.PackageCollection {
     public struct Package: Equatable, Codable {
-        /// URL of the package. For now only Git repository URLs are supported.
+        /// The URL of the package. Currently only Git repository URLs are supported.
         public let url: URL
 
-        /// A summary or description of what the package does, etc.
-        public let summary: String?
+        /// A description of the package.
+        public let _description: String?
 
-        /// A selected list of package versions
+        /// An array of keywords that the package is associated with.
+        public let keywords: [String]?
+
+        /// An array of version objects representing the most recent and/or relevant releases of the package.
         public let versions: [Version]
 
-        /// URL of the package's README
+        /// The URL of the package's README.
         public let readmeURL: URL?
 
         /// Creates a `Package`
         public init(
             url: URL,
-            summary: String? = nil,
+            description: String? = nil,
+            keywords: [String]? = nil,
             versions: [Version],
             readmeURL: URL? = nil
         ) {
             self.url = url
-            self.summary = summary
+            self._description = description
+            self.keywords = keywords
             self.versions = versions
             self.readmeURL = readmeURL
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case url
+            case _description = "description"
+            case keywords
+            case versions
+            case readmeURL
         }
     }
 }
 
-extension PackageCollection.Package {
-    /// Package version metadata
+extension JSONPackageCollectionModel.V1.PackageCollection.Package {
     public struct Version: Equatable, Codable {
-        /// Semantic version string
+        /// The semantic version string.
         public let version: String
 
-        /// Name of the package
+        /// The name of the package.
         public let packageName: String
 
-        /// Package version's targets
+        /// An array of the package version's targets.
         public let targets: [Target]
 
-        /// Package version's products
+        /// An array of the package version's products.
         public let products: [Product]
 
-        /// The tools version used by the package version
+        /// The tools (semantic) version specified in `Package.swift`.
         public let toolsVersion: String
 
-        /// Package version's **verified** platforms
+        /// An array of the package version’s supported platforms specified in `Package.swift`.
+        public let minimumPlatformVersions: [PlatformVersion]?
+
+        /// An array of platforms in which the package version has been tested and verified.
         public let verifiedPlatforms: [Platform]?
 
-        /// Package version's **verified** Swift versions
+        /// An array of Swift versions that the package version has been tested and verified for.
         public let verifiedSwiftVersions: [String]?
 
-        /// Package version's license
+        /// The package version's license.
         public let license: License?
 
         /// Creates a `Version`
@@ -127,6 +176,7 @@ extension PackageCollection.Package {
             targets: [Target],
             products: [Product],
             toolsVersion: String,
+            minimumPlatformVersions: [PlatformVersion]? = nil,
             verifiedPlatforms: [Platform]? = nil,
             verifiedSwiftVersions: [String]? = nil,
             license: License? = nil
@@ -136,18 +186,18 @@ extension PackageCollection.Package {
             self.targets = targets
             self.products = products
             self.toolsVersion = toolsVersion
+            self.minimumPlatformVersions = minimumPlatformVersions
             self.verifiedPlatforms = verifiedPlatforms
             self.verifiedSwiftVersions = verifiedSwiftVersions
             self.license = license
         }
     }
 
-    /// Package target
     public struct Target: Equatable, Codable {
-        /// Target name
+        /// The target name.
         public let name: String
 
-        /// The module name if this target can be imported as a module
+        /// The module name if this target can be imported as a module.
         public let moduleName: String?
 
         /// Creates a `Target`
@@ -157,15 +207,14 @@ extension PackageCollection.Package {
         }
     }
 
-    /// Package product
     public struct Product: Equatable, Codable {
-        /// Product name
+        /// The product name.
         public let name: String
 
-        /// Product type
+        /// The product type.
         public let type: ProductType
 
-        /// Product's targets
+        /// An array of the product’s targets.
         public let targets: [String]
 
         /// Creates a `Product`
@@ -180,9 +229,22 @@ extension PackageCollection.Package {
         }
     }
 
-    /// Platform
+    public struct PlatformVersion: Equatable, Codable {
+        /// The name of the platform (e.g., macOS, Linux, etc.).
+        public let name: String
+
+        /// The semantic version of the platform.
+        public let version: String
+
+        /// Creates a `PlatformVersion`
+        public init(name: String, version: String) {
+            self.name = name
+            self.version = version
+        }
+    }
+
     public struct Platform: Equatable, Codable {
-        /// Platform name (e.g., macOS, Linux, etc.)
+        /// The name of the platform (e.g., macOS, Linux, etc.).
         public let name: String
 
         /// Creates a `Platform`
@@ -191,12 +253,11 @@ extension PackageCollection.Package {
         }
     }
 
-    /// License
     public struct License: Equatable, Codable {
         /// License name (e.g., Apache-2.0, MIT, etc.)
         public let name: String
 
-        /// URL to the license file
+        /// The URL of the license file.
         public let url: URL
 
         /// Creates a `License`

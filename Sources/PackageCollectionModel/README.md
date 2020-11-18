@@ -9,28 +9,29 @@ engineering teams, focusing them on a trusted set of vetted packages.
 
 ## Creating a Package Collection
 
-Package collections are JSON documents and contain a list of packages and additional metadata per package.
+A package collection is a JSON document that contains a list of packages and metadata per package.
 
 To begin, define the top-level metadata about the collection:
 
-* `title`: The name of the package collection.
-* `overview`: An overview of the packages that are included. **Optional.**
+* `title`: The name of the package collection, for display purposes only.
+* `description`: A description of the package collection. **Optional.**
 * `keywords`: An array of keywords that the collection is associated with. **Optional.**
 * `formatVersion`: The version of the format to which the collection conforms. Currently, `1.0` is the only allowed value.
 * `revision`: The revision number of this package collection. **Optional.**
 * `generatedAt`: The ISO 8601-formatted datetime string when the package collection was generated.
+* `generatedBy`: The author of this package collection. **Optional.**
+    * `name`: The author name.
 * `packages`: An array of package objects.
-
 
 #### Add packages to the collection
 
-Each item in the `packages` array is a package object with the following fields:
+Each item in the `packages` array is a package object with the following properties:
 
 * `url`: The URL of the package. Currently only Git repository URLs are supported.
-* `summary`: A summary or description of the package. **Optional.**
+* `description`: A description of the package. **Optional.**
+* `keywords`: An array of keywords that the package is associated with. **Optional.**
 * `readmeURL`: The URL of the package's README. **Optional.**
 * `versions`: An array of version objects representing the most recent and/or relevant releases of the package.
-
 
 #### Add versions to a package
 
@@ -48,24 +49,33 @@ A version object has metadata extracted from `Package.swift` and optionally addi
 
 ```json
 {
-    "name": "MyProduct",
-    "type": {
-        "library": ["automatic"]
-    },
-    "targets": ["MyTarget"]
+  "name": "MyProduct",
+  "type": {
+    "library": ["automatic"]
+  },
+  "targets": ["MyTarget"]
 }
 ```
 
 * `toolsVersion`: The tools (semantic) version specified in `Package.swift`.
-* `verifiedPlatforms`: An array of the package version's **verified** platforms. Valid platform names include `macOS`, `iOS`, `tvOS`, `watchOS`, `Linux`, `Android`, and `Windows`. This is different from `platforms` in `Package.swift`. **Optional.**
+* `minimumPlatformVersions`: An array of the package version’s supported platforms specified in `Package.swift`. **Optional.**
 
 ```json
-{
-    "name": "macOS"
+{    
+  "name": "macOS",    
+  "version": "10.15"
 }
 ```
 
-* `verifiedSwiftVersions`: An array of the package version's **verified** Swift versions. Values must be semantic version strings. This is different from `swiftLanguageVersions` in `Package.swift`. **Optional.**
+* `verifiedPlatforms`: An array of platforms in which the package version has been tested and verified. Valid platform names include `macOS`, `iOS`, `tvOS`, `watchOS`, `Linux`, `Android`, and `Windows`. This is different from `platforms` in `Package.swift`. **Optional.**
+
+```json
+{
+  "name": "macOS"
+}
+```
+
+* `verifiedSwiftVersions`: An array of Swift versions that the package version has been tested and verified for. Values must be semantic version strings. This is different from `swiftLanguageVersions` in `Package.swift`. **Optional.**
 * `license`: The package version's license. **Optional.**
     * `name`: License name. [SPDX identifier](https://spdx.org/licenses/) (e.g., `Apache-2.0`, `MIT`, etc.) preferred.
     * `url`: The URL of the license file.
@@ -74,7 +84,6 @@ A version object has metadata extracted from `Package.swift` and optionally addi
 #### Other requirements
 
 * A package collection can list a maximum of 50 packages. 
-* Package versions must be sorted in descending order.
 * Package versions must include at most two major versions and up to three minor version per major version.
 * The package collection JSON file must not exceed 100KB in size.
 
@@ -84,7 +93,7 @@ A version object has metadata extracted from `Package.swift` and optionally addi
 ```json
 {
   "title": "Sample Package Collection",
-  "overview": "This is a sample package collection listing made-up packages.",
+  "description": "This is a sample package collection listing made-up packages.",
   "keywords": ["sample package collection"],
   "formatVersion": "1.0",
   "revision": 3,
@@ -92,7 +101,7 @@ A version object has metadata extracted from `Package.swift` and optionally addi
   "packages": [
     {
       "url": "https://www.example.com/repos/RepoOne.git",
-      "summary": "Package One",
+      "description": "Package One",
       "readmeURL": "https://www.example.com/repos/RepoOne/README",
       "versions": [
         {

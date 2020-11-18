@@ -24,6 +24,7 @@ struct PackageManifest: Decodable {
     let targets: [Target]
     let products: [Product]
     let toolsVersion: ToolsVersion
+    let platforms: [PlatformVersion]?
 
     struct Target: Decodable {
         let name: String
@@ -37,5 +38,10 @@ struct PackageManifest: Decodable {
 
     struct ToolsVersion: Decodable {
         let _version: String
+    }
+
+    struct PlatformVersion: Decodable {
+        let platformName: String
+        let version: String
     }
 }

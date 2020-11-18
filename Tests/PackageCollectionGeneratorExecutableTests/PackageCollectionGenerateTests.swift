@@ -21,6 +21,8 @@ import TSCUtility
 import XCTest
 
 final class PackageCollectionGenerateTests: XCTestCase {
+    typealias Model = JSONPackageCollectionModel.V1
+
     func test_help() throws {
         XCTAssert(try executeCommand(command: "package-collection-generate --help")
             .stdout.contains("USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]"))
@@ -52,29 +54,21 @@ final class PackageCollectionGenerateTests: XCTestCase {
             // Prepare input.json
             let input = PackageCollectionGeneratorInput(
                 title: "Test Package Collection",
-                overview: "A few test packages",
+                description: "A few test packages",
                 keywords: ["swift packages"],
                 packages: [
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoOne.git")!,
-                        summary: "Package Foo",
-                        versions: nil,
-                        excludedProducts: nil,
-                        excludedTargets: nil
+                        description: "Package Foo"
                     ),
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
-                        summary: "Package Foo & Bar",
-                        versions: nil,
-                        excludedProducts: nil,
-                        excludedTargets: nil
+                        description: "Package Foo & Bar"
                     ),
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoThree.git")!,
-                        summary: "Package Baz",
-                        versions: ["1.0.0"],
-                        excludedProducts: nil,
-                        excludedTargets: nil
+                        description: "Package Baz",
+                        versions: ["1.0.0"]
                     ),
                 ]
             )
@@ -91,28 +85,25 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 .stdout.contains("Package collection saved to \(outputFilePath.pathString)"))
 
             let expectedPackages = [
-                PackageCollection.Package(
+                Model.PackageCollection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoOne.git")!,
-                    summary: "Package Foo",
+                    description: "Package Foo",
                     versions: [
-                        PackageCollection.Package.Version(
+                        Model.PackageCollection.Package.Version(
                             version: "0.1.0",
                             packageName: "TestPackageOne",
                             targets: [.init(name: "Foo", moduleName: "Foo")],
                             products: [.init(name: "Foo", type: .library(.automatic), targets: ["Foo"])],
                             toolsVersion: "5.2.0",
-                            verifiedPlatforms: nil,
-                            verifiedSwiftVersions: nil,
-                            license: nil
+                            minimumPlatformVersions: [.init(name: "macos", version: "10.15")]
                         ),
-                    ],
-                    readmeURL: nil
+                    ]
                 ),
-                PackageCollection.Package(
+                Model.PackageCollection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
-                    summary: "Package Foo & Bar",
+                    description: "Package Foo & Bar",
                     versions: [
-                        PackageCollection.Package.Version(
+                        Model.PackageCollection.Package.Version(
                             version: "0.2.0",
                             packageName: "TestPackageTwo",
                             targets: [
@@ -123,40 +114,29 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                 .init(name: "Bar", type: .library(.automatic), targets: ["Bar"]),
                                 .init(name: "Foo", type: .library(.automatic), targets: ["Foo"]),
                             ],
-                            toolsVersion: "5.2.0",
-                            verifiedPlatforms: nil,
-                            verifiedSwiftVersions: nil,
-                            license: nil
+                            toolsVersion: "5.2.0"
                         ),
-                        PackageCollection.Package.Version(
+                        Model.PackageCollection.Package.Version(
                             version: "0.1.0",
                             packageName: "TestPackageTwo",
                             targets: [.init(name: "Bar", moduleName: "Bar")],
                             products: [.init(name: "Bar", type: .library(.automatic), targets: ["Bar"])],
-                            toolsVersion: "5.2.0",
-                            verifiedPlatforms: nil,
-                            verifiedSwiftVersions: nil,
-                            license: nil
+                            toolsVersion: "5.2.0"
                         ),
-                    ],
-                    readmeURL: nil
+                    ]
                 ),
-                PackageCollection.Package(
+                Model.PackageCollection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoThree.git")!,
-                    summary: "Package Baz",
+                    description: "Package Baz",
                     versions: [
-                        PackageCollection.Package.Version(
+                        Model.PackageCollection.Package.Version(
                             version: "1.0.0",
                             packageName: "TestPackageThree",
                             targets: [.init(name: "Baz", moduleName: "Baz")],
                             products: [.init(name: "Baz", type: .library(.automatic), targets: ["Baz"])],
-                            toolsVersion: "5.2.0",
-                            verifiedPlatforms: nil,
-                            verifiedSwiftVersions: nil,
-                            license: nil
+                            toolsVersion: "5.2.0"
                         ),
-                    ],
-                    readmeURL: nil
+                    ]
                 ),
             ]
 
@@ -165,9 +145,9 @@ final class PackageCollectionGenerateTests: XCTestCase {
 
             // Assert the generated package collection
             let collectionData = try localFileSystem.readFileContents(outputFilePath).contents
-            let packageCollection = try jsonDecoder.decode(PackageCollection.self, from: Data(collectionData))
+            let packageCollection = try jsonDecoder.decode(Model.PackageCollection.self, from: Data(collectionData))
             XCTAssertEqual(input.title, packageCollection.title)
-            XCTAssertEqual(input.overview, packageCollection.overview)
+            XCTAssertEqual(input._description, packageCollection._description)
             XCTAssertEqual(input.keywords, packageCollection.keywords)
             XCTAssertEqual(expectedPackages, packageCollection.packages)
         }

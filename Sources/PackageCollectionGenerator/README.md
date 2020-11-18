@@ -38,37 +38,46 @@ The input is a JSON document that contains metadata about the collection and lis
 
 Collection metadata:
 
-* `title`: The name of the package collection.
-* `overview`: An overview of the packages that are included. **Optional.**
+* `title`: The name of the package collection, for display purposes only.
+* `description`: A description of the package collection. **Optional.**
 * `keywords`: An array of keywords that the collection is associated with. **Optional.**
+* `author`: The author of this package collection. **Optional.**
+    * `name`: The author name.
 * `packages`: An array of package objects.
 
 Each item in the `packages` array is a package object with the following fields:
 
 * `url`: The URL of the package. Currently only Git repository URLs are supported.
-* `summary`: A summary or description of the package. **Optional.**
+* `description`: A description of the package. **Optional.**
+* `keywords`: An array of keywords that the package is associated with. **Optional.**
 * `versions`: An array of package versions to include. **Optional.** If not specified, the generate will select the most recent versions.
 * `excludedProducts`: An array of product names to exclude. **Optional.**
 * `excludedTargets`: An array of target names to exclude. **Optional.**
+* `readmeURL`: The URL of the package's README. **Optional.**
 
 ### Example
 
 ```json
 {
   "title": "Sample Package Collection",
-  "overview": "This is a sample package collection listing made-up packages.",
+  "description": "This is a sample package collection listing made-up packages.",
   "keywords": ["sample package collection"],
   "packages": [
     {
       "url": "https://www.example.com/repos/RepoOne.git",
-      "summary": "Package One",
+      "description": "Package One",
+      "keywords": ["sample package"],
       "versions": ["0.2.0", "0.1.0"],
       "excludedProducts": ["Foo"],
-      "excludedTargets": ["Bar"]
+      "excludedTargets": ["Bar"],
+      "readmeURL": "https://www.example.com/repos/RepoOne/README"
     },
     {
       "url": "https://www.example.com/repos/RepoTwo.git"
     }
-  ]
+  ],
+  "author": {
+    "name": "Jane Doe"
+  }
 }
 ```

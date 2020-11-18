@@ -19,18 +19,22 @@ import XCTest
 @testable import PackageCollectionModel
 
 class PackageCollectionModelTests: XCTestCase {
+    typealias Model = JSONPackageCollectionModel.V1
+
     func testCodable() throws {
         let packages = [
-            PackageCollection.Package(
+            Model.PackageCollection.Package(
                 url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
-                summary: "Package Foobar",
+                description: "Package Foobar",
+                keywords: ["test package"],
                 versions: [
-                    PackageCollection.Package.Version(
+                    Model.PackageCollection.Package.Version(
                         version: "1.3.2",
                         packageName: "Foobar",
                         targets: [.init(name: "Foo", moduleName: "Foo")],
                         products: [.init(name: "Bar", type: .library(.automatic), targets: ["Foo"])],
                         toolsVersion: "5.2",
+                        minimumPlatformVersions: [.init(name: "macOS", version: "10.15")],
                         verifiedPlatforms: [.init(name: "macOS")],
                         verifiedSwiftVersions: ["5.2"],
                         license: .init(name: "Apache-2.0", url: URL(string: "https://package-collection-tests.com/repos/foobar/LICENSE")!)
@@ -39,17 +43,19 @@ class PackageCollectionModelTests: XCTestCase {
                 readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
             ),
         ]
-        let packageCollection = PackageCollection(
+        let packageCollection = Model.PackageCollection(
             title: "Test Package Collection",
-            overview: "A test package collection",
+            description: "A test package collection",
             keywords: ["swift packages"],
             packages: packages,
             formatVersion: .v1_0,
-            generatedAt: Date()
+            revision: 3,
+            generatedAt: Date(),
+            generatedBy: .init(name: "Jane Doe")
         )
 
         let data = try JSONEncoder().encode(packageCollection)
-        let decoded = try JSONDecoder().decode(PackageCollection.self, from: data)
+        let decoded = try JSONDecoder().decode(Model.PackageCollection.self, from: data)
         XCTAssertEqual(packageCollection, decoded)
     }
 }
