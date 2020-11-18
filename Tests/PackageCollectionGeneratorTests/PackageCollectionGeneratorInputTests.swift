@@ -21,13 +21,13 @@ import XCTest
 class PackageCollectionGeneratorInputTests: XCTestCase {
     func testLoadFromFile() throws {
         let expectedInput = PackageCollectionGeneratorInput(
-            title: "Test Package Collection",
-            description: "A test package collection",
+            name: "Test Package Collection",
+            overview: "A test package collection",
             keywords: ["swift packages"],
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
-                    description: "Package Foobar",
+                    summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["0.2.0", "0.1.0"],
                     excludedProducts: ["Foo"],
@@ -52,13 +52,13 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
 
     func testCodable() throws {
         let input = PackageCollectionGeneratorInput(
-            title: "Test Package Collection",
-            description: "A test package collection",
+            name: "Test Package Collection",
+            overview: "A test package collection",
             keywords: ["swift packages"],
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
-                    description: "Package Foobar",
+                    summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["1.3.2"],
                     excludedProducts: ["Foo"],

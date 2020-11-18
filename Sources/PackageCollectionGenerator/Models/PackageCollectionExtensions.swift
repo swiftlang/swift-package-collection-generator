@@ -12,14 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-import PackageCollectionModel
+import PackageCollections
 
-extension JSONPackageCollectionModel.V1.PackageCollection: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Collection: CustomStringConvertible {
     public var description: String {
         """
-        PackageCollection {
-            title=\(self.title),
-            description=\(self._description ?? "nil"),
+        Collection {
+            name=\(self.name),
+            overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             packages=\(self.packages),
             formatVersion=\(self.formatVersion),
@@ -31,18 +31,18 @@ extension JSONPackageCollectionModel.V1.PackageCollection: CustomStringConvertib
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Author: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Collection.Author: CustomStringConvertible {
     public var description: String {
         self.name
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Collection.Package: CustomStringConvertible {
     public var description: String {
         """
         Package {
             url=\(self.url),
-            description=\(self._description ?? "nil"),
+            summary=\(self.summary ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             versions=\(self.versions),
             readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil")
@@ -51,7 +51,7 @@ extension JSONPackageCollectionModel.V1.PackageCollection.Package: CustomStringC
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.Version: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Collection.Package.Version: CustomStringConvertible {
     public var description: String {
         """
         Version {
@@ -69,7 +69,7 @@ extension JSONPackageCollectionModel.V1.PackageCollection.Package.Version: Custo
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.Target: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Target: CustomStringConvertible {
     public var description: String {
         """
         Target(
@@ -80,7 +80,7 @@ extension JSONPackageCollectionModel.V1.PackageCollection.Package.Target: Custom
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.Product: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Product: CustomStringConvertible {
     public var description: String {
         """
         Product(
@@ -92,19 +92,19 @@ extension JSONPackageCollectionModel.V1.PackageCollection.Package.Product: Custo
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.PlatformVersion: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.PlatformVersion: CustomStringConvertible {
     public var description: String {
         "\(self.name)(\(self.version))"
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.Platform: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.Platform: CustomStringConvertible {
     public var description: String {
         self.name
     }
 }
 
-extension JSONPackageCollectionModel.V1.PackageCollection.Package.License: CustomStringConvertible {
+extension JSONPackageCollectionModel.V1.License: CustomStringConvertible {
     public var description: String {
         "License(\(self.name), \(self.url))"
     }
