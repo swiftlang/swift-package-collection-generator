@@ -61,8 +61,8 @@ A version object has metadata extracted from `Package.swift` and optionally addi
 * `minimumPlatformVersions`: An array of the package version’s supported platforms specified in `Package.swift`. **Optional.**
 
 ```json
-{    
-  "name": "macOS",    
+{
+  "name": "macOS",
   "version": "10.15"
 }
 ```
@@ -138,7 +138,7 @@ A version object has metadata extracted from `Package.swift` and optionally addi
     },
     {
       "url": "https://www.example.com/repos/RepoTwo.git",
-      "summary": "Package Two",
+      "description": "Package Two",
       "readmeURL": "https://www.example.com/repos/RepoTwo/README",
       "versions": [
         {
