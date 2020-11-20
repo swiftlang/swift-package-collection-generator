@@ -14,7 +14,7 @@
 
 import ArgumentParser
 import Foundation
-import PackageCollectionModel
+import PackageCollections
 import TSCBasic
 import TSCUtility
 import Utilities
@@ -62,7 +62,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("\(input)", verbose: self.verbose)
 
         // Generate metadata for each package
-        let packages: [Model.PackageCollection.Package] = input.packages.compactMap { package in
+        let packages: [Model.Collection.Package] = input.packages.compactMap { package in
             do {
                 let packageMetadata = try self.generateMetadata(for: package, jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
@@ -73,9 +73,9 @@ public struct PackageCollectionGenerate: ParsableCommand {
             }
         }
         // Construct the package collection
-        let packageCollection = Model.PackageCollection(
-            title: input.title,
-            description: input._description,
+        let packageCollection = Model.Collection(
+            name: input.name,
+            overview: input.overview,
             keywords: input.keywords,
             packages: packages,
             formatVersion: .v1_0,
@@ -107,7 +107,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func generateMetadata(
         for package: PackageCollectionGeneratorInput.Package,
         jsonDecoder: JSONDecoder
-    ) throws -> Model.PackageCollection.Package {
+    ) throws -> Model.Collection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -158,11 +158,11 @@ public struct PackageCollectionGenerate: ParsableCommand {
         for package: PackageCollectionGeneratorInput.Package,
         gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
-    ) throws -> Model.PackageCollection.Package {
+    ) throws -> Model.Collection.Package {
         // Select versions if none specified
         let versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
         // Load the manifest for each version and extract metadata
-        let packageVersions: [Model.PackageCollection.Package.Version] = versions.compactMap { version in
+        let packageVersions: [Model.Collection.Package.Version] = versions.compactMap { version in
             do {
                 return try self.generateMetadata(
                     for: version,
@@ -176,9 +176,9 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 return nil
             }
         }
-        return Model.PackageCollection.Package(
+        return Model.Collection.Package(
             url: package.url,
-            description: package._description,
+            summary: package.summary,
             keywords: package.keywords,
             versions: packageVersions,
             readmeURL: package.readmeURL
@@ -191,7 +191,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         excludedTargets: Set<String>,
         gitDirectoryPath: AbsolutePath,
         jsonDecoder: JSONDecoder
-    ) throws -> Model.PackageCollection.Package.Version {
+    ) throws -> Model.Collection.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
@@ -207,10 +207,10 @@ public struct PackageCollectionGenerate: ParsableCommand {
             result[target.name] = target.c99name
         }
 
-        let products: [Model.PackageCollection.Package.Product] = manifest.products
+        let products: [Model.Product] = manifest.products
             .filter { !excludedProducts.contains($0.name) }
             .map { product in
-                Model.PackageCollection.Package.Product(
+                Model.Product(
                     name: product.name,
                     type: product.type,
                     targets: product.targets
@@ -222,16 +222,16 @@ public struct PackageCollectionGenerate: ParsableCommand {
             result.append(contentsOf: targets.filter { !excludedTargets.contains($0) })
         })
 
-        var minimumPlatformVersions: [Model.PackageCollection.Package.PlatformVersion]?
+        var minimumPlatformVersions: [Model.PlatformVersion]?
         if let platforms = manifest.platforms, !platforms.isEmpty {
-            minimumPlatformVersions = platforms.map { Model.PackageCollection.Package.PlatformVersion(name: $0.platformName, version: $0.version) }
+            minimumPlatformVersions = platforms.map { Model.PlatformVersion(name: $0.platformName, version: $0.version) }
         }
 
-        return Model.PackageCollection.Package.Version(
+        return Model.Collection.Package.Version(
             version: version,
             packageName: manifest.name,
             targets: manifest.targets.filter { publicTargets.contains($0.name) }.map { target in
-                Model.PackageCollection.Package.Target(
+                Model.Target(
                     name: target.name,
                     moduleName: targetModuleNames[target.name]
                 )

@@ -13,15 +13,15 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import PackageCollectionModel
+import PackageCollections
 
 /// Input for the `package-collection-generate` command
 public struct PackageCollectionGeneratorInput: Equatable, Codable {
     /// The name of the package collection, for display purposes only.
-    public let title: String
+    public let name: String
 
     /// A description of the package collection.
-    public let _description: String?
+    public let overview: String?
 
     /// An array of keywords that the collection is associated with.
     public let keywords: [String]?
@@ -30,28 +30,20 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
     public let packages: [Package]
 
     /// The author of this package collection.
-    public let author: JSONPackageCollectionModel.V1.PackageCollection.Author?
+    public let author: JSONPackageCollectionModel.V1.Collection.Author?
 
     public init(
-        title: String,
-        description: String? = nil,
+        name: String,
+        overview: String? = nil,
         keywords: [String]? = nil,
         packages: [Package],
-        author: JSONPackageCollectionModel.V1.PackageCollection.Author? = nil
+        author: JSONPackageCollectionModel.V1.Collection.Author? = nil
     ) {
-        self.title = title
-        self._description = description
+        self.name = name
+        self.overview = overview
         self.keywords = keywords
         self.packages = packages
         self.author = author
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case title
-        case _description = "description"
-        case keywords
-        case packages
-        case author
     }
 }
 
@@ -59,8 +51,8 @@ extension PackageCollectionGeneratorInput: CustomStringConvertible {
     public var description: String {
         """
         PackageCollectionGeneratorInput {
-            title=\(self.title),
-            description=\(self._description ?? "nil"),
+            name=\(self.name),
+            overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             packages=\(self.packages),
             author=\(self.author.map { "\($0)" } ?? "nil")
@@ -76,7 +68,7 @@ extension PackageCollectionGeneratorInput {
         public let url: URL
 
         /// A description of the package.
-        public let _description: String?
+        public let summary: String?
 
         /// An array of keywords that the package is associated with.
         public let keywords: [String]?
@@ -96,7 +88,7 @@ extension PackageCollectionGeneratorInput {
 
         public init(
             url: URL,
-            description: String? = nil,
+            summary: String? = nil,
             keywords: [String]? = nil,
             versions: [String]? = nil,
             excludedProducts: [String]? = nil,
@@ -104,22 +96,12 @@ extension PackageCollectionGeneratorInput {
             readmeURL: URL? = nil
         ) {
             self.url = url
-            self._description = description
+            self.summary = summary
             self.keywords = keywords
             self.versions = versions
             self.excludedProducts = excludedProducts
             self.excludedTargets = excludedTargets
             self.readmeURL = readmeURL
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case url
-            case _description = "description"
-            case keywords
-            case versions
-            case excludedProducts
-            case excludedTargets
-            case readmeURL
         }
     }
 }
@@ -129,7 +111,7 @@ extension PackageCollectionGeneratorInput.Package: CustomStringConvertible {
         """
         Package {
                 url=\(self.url),
-                description=\(self._description ?? "nil"),
+                summary=\(self.summary ?? "nil"),
                 keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
                 versions=\(self.versions.map { "\($0)" } ?? "nil"),
                 excludedProducts=\(self.excludedProducts.map { "\($0)" } ?? "nil"),

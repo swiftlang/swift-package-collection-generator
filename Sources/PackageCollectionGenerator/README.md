@@ -38,7 +38,7 @@ The input is a JSON document that contains metadata about the collection and lis
 
 Collection metadata:
 
-* `title`: The name of the package collection, for display purposes only.
+* `name`: The name of the package collection, for display purposes only.
 * `description`: A description of the package collection. **Optional.**
 * `keywords`: An array of keywords that the collection is associated with. **Optional.**
 * `author`: The author of this package collection. **Optional.**
@@ -59,7 +59,7 @@ Each item in the `packages` array is a package object with the following fields:
 
 ```json
 {
-  "title": "Sample Package Collection",
+  "name": "Sample Package Collection",
   "description": "This is a sample package collection listing made-up packages.",
   "keywords": ["sample package collection"],
   "packages": [

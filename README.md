@@ -9,7 +9,7 @@ This repository provides a set of Swift packages and tooling for the generation 
 ## Package Collection Format
 
 Package collections can be created and published by anyone. To make sure SwiftPM can consume 
-them, all package collections must adhere to the same format. See the [specification](Sources/PackageCollectionModel/README.md) 
+them, all package collections must adhere to the same format. See the [v1 format](PackageCollectionFormats/v1.md) 
 for details.
 
 ## Generating a Package Collection
