@@ -81,8 +81,14 @@ final class PackageCollectionGenerateTests: XCTestCase {
             // `tmpDir` is where we extract the repos so use it as the working directory so we won't actually doing any cloning
             let workingDirectoryPath = tmpDir
 
-            XCTAssert(try executeCommand(command: "package-collection-generate --verbose \(inputFilePath.pathString) \(outputFilePath.pathString) --working-directory-path \(workingDirectoryPath.pathString)")
-                .stdout.contains("Package collection saved to \(outputFilePath.pathString)"))
+            let cmd = try PackageCollectionGenerate.parse([
+                "--verbose",
+                inputFilePath.pathString,
+                outputFilePath.pathString,
+                "--working-directory-path",
+                workingDirectoryPath.pathString
+            ])
+            try cmd.run()
 
             let expectedPackages = [
                 Model.Collection.Package(
