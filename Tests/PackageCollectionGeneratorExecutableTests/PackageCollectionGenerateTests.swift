@@ -86,7 +86,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 inputFilePath.pathString,
                 outputFilePath.pathString,
                 "--working-directory-path",
-                workingDirectoryPath.pathString
+                workingDirectoryPath.pathString,
             ])
             try cmd.run()
 
