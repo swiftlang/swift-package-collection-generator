@@ -45,7 +45,8 @@ extension JSONPackageCollectionModel.V1.Collection.Package: CustomStringConverti
             summary=\(self.summary ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             versions=\(self.versions),
-            readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil")
+            readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil"),
+            license=\(self.license.map { "\($0)" } ?? "nil")
         }
         """
     }
@@ -61,8 +62,7 @@ extension JSONPackageCollectionModel.V1.Collection.Package.Version: CustomString
                 products=\(self.products),
                 toolsVersion=\(self.toolsVersion),
                 minimumPlatformVersions=\(self.minimumPlatformVersions.map { "\($0)" } ?? "nil"),
-                verifiedPlatforms=\(self.verifiedPlatforms.map { "\($0)" } ?? "nil"),
-                verifiedSwiftVersions=\(self.verifiedSwiftVersions.map { "\($0)" } ?? "nil"),
+                verifiedCompatibility=\(self.verifiedCompatibility.map { "\($0)" } ?? "nil"),
                 license=\(self.license.map { "\($0)" } ?? "nil")
             }
         """
@@ -98,6 +98,12 @@ extension JSONPackageCollectionModel.V1.PlatformVersion: CustomStringConvertible
     }
 }
 
+extension JSONPackageCollectionModel.V1.Compatibility: CustomStringConvertible {
+    public var description: String {
+        "(\(self.platform), \(self.swiftVersion))"
+    }
+}
+
 extension JSONPackageCollectionModel.V1.Platform: CustomStringConvertible {
     public var description: String {
         self.name
@@ -106,6 +112,6 @@ extension JSONPackageCollectionModel.V1.Platform: CustomStringConvertible {
 
 extension JSONPackageCollectionModel.V1.License: CustomStringConvertible {
     public var description: String {
-        "License(\(self.name), \(self.url))"
+        "License(\(self.url)\(self.name.map { ", \($0)" } ?? ""))"
     }
 }

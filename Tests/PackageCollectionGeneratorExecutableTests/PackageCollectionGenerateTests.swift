@@ -94,6 +94,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 Model.Collection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoOne.git")!,
                     summary: "Package Foo",
+                    keywords: nil,
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.1.0",
@@ -101,13 +102,18 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             targets: [.init(name: "Foo", moduleName: "Foo")],
                             products: [.init(name: "Foo", type: .library(.automatic), targets: ["Foo"])],
                             toolsVersion: "5.2.0",
-                            minimumPlatformVersions: [.init(name: "macos", version: "10.15")]
+                            minimumPlatformVersions: [.init(name: "macos", version: "10.15")],
+                            verifiedCompatibility: nil,
+                            license: nil
                         ),
-                    ]
+                    ],
+                    readmeURL: nil,
+                    license: nil
                 ),
                 Model.Collection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
                     summary: "Package Foo & Bar",
+                    keywords: nil,
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.2.0",
@@ -120,29 +126,43 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                 .init(name: "Bar", type: .library(.automatic), targets: ["Bar"]),
                                 .init(name: "Foo", type: .library(.automatic), targets: ["Foo"]),
                             ],
-                            toolsVersion: "5.2.0"
+                            toolsVersion: "5.2.0",
+                            minimumPlatformVersions: nil,
+                            verifiedCompatibility: nil,
+                            license: nil
                         ),
                         Model.Collection.Package.Version(
                             version: "0.1.0",
                             packageName: "TestPackageTwo",
                             targets: [.init(name: "Bar", moduleName: "Bar")],
                             products: [.init(name: "Bar", type: .library(.automatic), targets: ["Bar"])],
-                            toolsVersion: "5.2.0"
+                            toolsVersion: "5.2.0",
+                            minimumPlatformVersions: nil,
+                            verifiedCompatibility: nil,
+                            license: nil
                         ),
-                    ]
+                    ],
+                    readmeURL: nil,
+                    license: nil
                 ),
                 Model.Collection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoThree.git")!,
                     summary: "Package Baz",
+                    keywords: nil,
                     versions: [
                         Model.Collection.Package.Version(
                             version: "1.0.0",
                             packageName: "TestPackageThree",
                             targets: [.init(name: "Baz", moduleName: "Baz")],
                             products: [.init(name: "Baz", type: .library(.automatic), targets: ["Baz"])],
-                            toolsVersion: "5.2.0"
+                            toolsVersion: "5.2.0",
+                            minimumPlatformVersions: nil,
+                            verifiedCompatibility: nil,
+                            license: nil
                         ),
-                    ]
+                    ],
+                    readmeURL: nil,
+                    license: nil
                 ),
             ]
 

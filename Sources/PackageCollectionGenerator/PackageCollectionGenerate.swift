@@ -181,7 +181,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
             summary: package.summary,
             keywords: package.keywords,
             versions: packageVersions,
-            readmeURL: package.readmeURL
+            readmeURL: package.readmeURL,
+            license: nil
         )
     }
 
@@ -239,8 +240,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             products: products,
             toolsVersion: manifest.toolsVersion._version,
             minimumPlatformVersions: minimumPlatformVersions,
-            verifiedPlatforms: nil,
-            verifiedSwiftVersions: nil,
+            verifiedCompatibility: nil,
             license: nil
         )
     }
