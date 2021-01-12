@@ -11,6 +11,8 @@ let package = Package(
         .executable(name: "package-collection-generate", targets: ["PackageCollectionGeneratorExecutable"]),
         .library(name: "PackageCollectionValidator", targets: ["PackageCollectionValidator"]),
         .executable(name: "package-collection-validate", targets: ["PackageCollectionValidatorExecutable"]),
+        .library(name: "PackageCollectionDiff", targets: ["PackageCollectionDiff"]),
+        .executable(name: "package-collection-diff", targets: ["PackageCollectionDiffExecutable"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "0.3.0")),
@@ -36,6 +38,13 @@ let package = Package(
         ]),
         .target(name: "PackageCollectionValidatorExecutable", dependencies: ["PackageCollectionValidator"]),
 
+        .target(name: "PackageCollectionDiff", dependencies: [
+            "Utilities",
+            .product(name: "SwiftPMDataModel", package: "SwiftPM"),
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]),
+        .target(name: "PackageCollectionDiffExecutable", dependencies: ["PackageCollectionDiff"]),
+
         .target(name: "TestUtilities", dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
             .product(name: "SwiftPMDataModel", package: "SwiftPM"),
@@ -49,6 +58,11 @@ let package = Package(
 
         .testTarget(name: "PackageCollectionValidatorExecutableTests", dependencies: [
             "PackageCollectionValidatorExecutable",
+            "TestUtilities",
+        ]),
+
+        .testTarget(name: "PackageCollectionDiffExecutableTests", dependencies: [
+            "PackageCollectionDiffExecutable",
             "TestUtilities",
         ]),
     ]
