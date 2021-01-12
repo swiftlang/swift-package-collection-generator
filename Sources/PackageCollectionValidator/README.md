@@ -16,7 +16,3 @@ OPTIONS:
   --verbose               Show extra logging for debugging purposes
   -h, --help              Show help information.
 ```
-
-### System Requirements
-
-The validator requires Swift toolchains to run.
