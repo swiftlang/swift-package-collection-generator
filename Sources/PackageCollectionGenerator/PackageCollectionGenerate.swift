@@ -95,13 +95,19 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
 
         // Make sure the output directory exists
-        let outputDirectory = AbsolutePath(outputPath).parentDirectory
+        let outputAbsolutePath: AbsolutePath
+        do {
+            outputAbsolutePath = try AbsolutePath(validating: self.outputPath)
+        } catch {
+            outputAbsolutePath = AbsolutePath(self.outputPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
+        }
+        let outputDirectory = outputAbsolutePath.parentDirectory
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
         // Write the package collection
         let jsonData = try jsonEncoder.encode(packageCollection)
-        try jsonData.write(to: URL(fileURLWithPath: self.outputPath))
-        print("Package collection saved to \(self.outputPath)", inColor: .cyan, verbose: self.verbose)
+        try jsonData.write(to: URL(fileURLWithPath: outputAbsolutePath.pathString))
+        print("Package collection saved to \(outputAbsolutePath)", inColor: .cyan, verbose: self.verbose)
     }
 
     private func generateMetadata(
@@ -112,6 +118,13 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
         // Try to locate the directory where the repository might have been cloned to previously
         if let workingDirectoryPath = self.workingDirectoryPath {
+            let workingDirectoryAbsolutePath: AbsolutePath
+            do {
+                workingDirectoryAbsolutePath = try AbsolutePath(validating: workingDirectoryPath)
+            } catch {
+                workingDirectoryAbsolutePath = AbsolutePath(workingDirectoryPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
+            }
+            
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
             let regex = try NSRegularExpression(pattern: "([^/]+)\\.git$", options: .caseInsensitive)
@@ -121,7 +134,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                     let repositoryName = String(repositoryURL[range])
                     print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
 
-                    let gitDirectoryPath = AbsolutePath(workingDirectoryPath).appending(component: repositoryName)
+                    let gitDirectoryPath = workingDirectoryAbsolutePath.appending(component: repositoryName)
                     if localFileSystem.exists(gitDirectoryPath) {
                         // If directory exists, assume it has been cloned previously
                         print("\(gitDirectoryPath) exists", inColor: .yellow, verbose: self.verbose)
