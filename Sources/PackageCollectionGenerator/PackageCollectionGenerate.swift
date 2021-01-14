@@ -68,7 +68,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 print("\(packageMetadata)", verbose: self.verbose)
                 return packageMetadata
             } catch {
-                printError("Failed to generate package metadata: \(error)")
+                printError("Failed to generate metadata for package \(package.url): \(error)")
                 return nil
             }
         }
@@ -124,7 +124,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             } catch {
                 workingDirectoryAbsolutePath = AbsolutePath(workingDirectoryPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
             }
-            
+
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
             let regex = try NSRegularExpression(pattern: "([^/]+)\\.git$", options: .caseInsensitive)
@@ -185,7 +185,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                     jsonDecoder: jsonDecoder
                 )
             } catch {
-                printError("Failed to load package manifest for version \(version): \(error)")
+                printError("Failed to load package manifest for \(package.url) version \(version): \(error)")
                 return nil
             }
         }
