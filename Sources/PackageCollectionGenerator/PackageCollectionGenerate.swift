@@ -124,7 +124,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             } catch {
                 workingDirectoryAbsolutePath = AbsolutePath(workingDirectoryPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
             }
-            
+
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
             let regex = try NSRegularExpression(pattern: "([^/]+)\\.git$", options: .caseInsensitive)
