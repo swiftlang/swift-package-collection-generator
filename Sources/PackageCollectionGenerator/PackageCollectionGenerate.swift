@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -14,7 +14,8 @@
 
 import ArgumentParser
 import Foundation
-import PackageCollections
+import PackageCollectionsModel
+import PackageModel
 import TSCBasic
 import TSCUtility
 import Utilities
@@ -226,7 +227,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             .map { product in
                 Model.Product(
                     name: product.name,
-                    type: product.type,
+                    type: Model.ProductType(from: product.type),
                     targets: product.targets
                 )
             }
@@ -292,5 +293,31 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Default versions: \(versions)", inColor: .green, verbose: self.verbose)
 
         return versions
+    }
+}
+
+extension JSONPackageCollectionModel.V1.ProductType {
+    init(from: PackageModel.ProductType) {
+        switch from {
+        case .library(let libraryType):
+            self = .library(.init(from: libraryType))
+        case .executable:
+            self = .executable
+        case .test:
+            self = .test
+        }
+    }
+}
+
+extension JSONPackageCollectionModel.V1.ProductType.LibraryType {
+    init(from: PackageModel.ProductType.LibraryType) {
+        switch from {
+        case .static:
+            self = .static
+        case .dynamic:
+            self = .dynamic
+        case .automatic:
+            self = .automatic
+        }
     }
 }
