@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -14,14 +14,14 @@
 
 import Foundation
 @testable import PackageCollectionGenerator
-import PackageCollections
+import PackageCollectionsModel
 @testable import TestUtilities
 import TSCBasic
 import TSCUtility
 import XCTest
 
 final class PackageCollectionGenerateTests: XCTestCase {
-    typealias Model = JSONPackageCollectionModel.V1
+    typealias Model = PackageCollectionModel.V1
 
     func test_help() throws {
         XCTAssert(try executeCommand(command: "package-collection-generate --help")

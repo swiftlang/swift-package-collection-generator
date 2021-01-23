@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,9 +12,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import PackageCollections
+import PackageCollectionsModel
 
-extension JSONPackageCollectionModel.V1.Collection: CustomStringConvertible {
+extension PackageCollectionModel.V1.Collection: CustomStringConvertible {
     public var description: String {
         """
         Collection {
@@ -31,13 +31,13 @@ extension JSONPackageCollectionModel.V1.Collection: CustomStringConvertible {
     }
 }
 
-extension JSONPackageCollectionModel.V1.Collection.Author: CustomStringConvertible {
+extension PackageCollectionModel.V1.Collection.Author: CustomStringConvertible {
     public var description: String {
         self.name
     }
 }
 
-extension JSONPackageCollectionModel.V1.Collection.Package: CustomStringConvertible {
+extension PackageCollectionModel.V1.Collection.Package: CustomStringConvertible {
     public var description: String {
         """
         Package {
@@ -52,7 +52,7 @@ extension JSONPackageCollectionModel.V1.Collection.Package: CustomStringConverti
     }
 }
 
-extension JSONPackageCollectionModel.V1.Collection.Package.Version: CustomStringConvertible {
+extension PackageCollectionModel.V1.Collection.Package.Version: CustomStringConvertible {
     public var description: String {
         """
         Version {
@@ -69,7 +69,7 @@ extension JSONPackageCollectionModel.V1.Collection.Package.Version: CustomString
     }
 }
 
-extension JSONPackageCollectionModel.V1.Target: CustomStringConvertible {
+extension PackageCollectionModel.V1.Target: CustomStringConvertible {
     public var description: String {
         """
         Target(
@@ -80,7 +80,7 @@ extension JSONPackageCollectionModel.V1.Target: CustomStringConvertible {
     }
 }
 
-extension JSONPackageCollectionModel.V1.Product: CustomStringConvertible {
+extension PackageCollectionModel.V1.Product: CustomStringConvertible {
     public var description: String {
         """
         Product(
@@ -92,25 +92,25 @@ extension JSONPackageCollectionModel.V1.Product: CustomStringConvertible {
     }
 }
 
-extension JSONPackageCollectionModel.V1.PlatformVersion: CustomStringConvertible {
+extension PackageCollectionModel.V1.PlatformVersion: CustomStringConvertible {
     public var description: String {
         "\(self.name)(\(self.version))"
     }
 }
 
-extension JSONPackageCollectionModel.V1.Compatibility: CustomStringConvertible {
+extension PackageCollectionModel.V1.Compatibility: CustomStringConvertible {
     public var description: String {
         "(\(self.platform), \(self.swiftVersion))"
     }
 }
 
-extension JSONPackageCollectionModel.V1.Platform: CustomStringConvertible {
+extension PackageCollectionModel.V1.Platform: CustomStringConvertible {
     public var description: String {
         self.name
     }
 }
 
-extension JSONPackageCollectionModel.V1.License: CustomStringConvertible {
+extension PackageCollectionModel.V1.License: CustomStringConvertible {
     public var description: String {
         "License(\(self.url)\(self.name.map { ", \($0)" } ?? ""))"
     }

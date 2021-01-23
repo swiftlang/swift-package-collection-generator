@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import PackageCollections
+import PackageCollectionsModel
 
 /// Input for the `package-collection-generate` command
 public struct PackageCollectionGeneratorInput: Equatable, Codable {
@@ -30,14 +30,14 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
     public let packages: [Package]
 
     /// The author of this package collection.
-    public let author: JSONPackageCollectionModel.V1.Collection.Author?
+    public let author: PackageCollectionModel.V1.Collection.Author?
 
     public init(
         name: String,
         overview: String? = nil,
         keywords: [String]? = nil,
         packages: [Package],
-        author: JSONPackageCollectionModel.V1.Collection.Author? = nil
+        author: PackageCollectionModel.V1.Collection.Author? = nil
     ) {
         self.name = name
         self.overview = overview

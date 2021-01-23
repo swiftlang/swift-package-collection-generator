@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -14,7 +14,7 @@
 
 import ArgumentParser
 import Foundation
-import PackageCollections
+import PackageCollectionsModel
 import TSCBasic
 import Utilities
 
@@ -32,7 +32,7 @@ public struct PackageCollectionDiff: ParsableCommand {
     @Flag(name: .long, help: "Show extra logging for debugging purposes")
     private var verbose: Bool = false
 
-    typealias Model = JSONPackageCollectionModel.V1
+    typealias Model = PackageCollectionModel.V1
 
     public init() {}
 
