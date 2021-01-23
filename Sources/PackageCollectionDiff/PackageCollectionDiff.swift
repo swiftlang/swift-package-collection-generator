@@ -32,7 +32,7 @@ public struct PackageCollectionDiff: ParsableCommand {
     @Flag(name: .long, help: "Show extra logging for debugging purposes")
     private var verbose: Bool = false
 
-    typealias Model = JSONPackageCollectionModel.V1
+    typealias Model = PackageCollectionModel.V1
 
     public init() {}
 

@@ -48,7 +48,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     @Flag(name: .long, help: "Show extra logging for debugging purposes")
     private var verbose: Bool = false
 
-    typealias Model = JSONPackageCollectionModel.V1
+    typealias Model = PackageCollectionModel.V1
 
     public init() {}
 
@@ -296,7 +296,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     }
 }
 
-extension JSONPackageCollectionModel.V1.ProductType {
+extension PackageCollectionModel.V1.ProductType {
     init(from: PackageModel.ProductType) {
         switch from {
         case .library(let libraryType):
@@ -309,7 +309,7 @@ extension JSONPackageCollectionModel.V1.ProductType {
     }
 }
 
-extension JSONPackageCollectionModel.V1.ProductType.LibraryType {
+extension PackageCollectionModel.V1.ProductType.LibraryType {
     init(from: PackageModel.ProductType.LibraryType) {
         switch from {
         case .static:

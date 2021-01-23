@@ -30,14 +30,14 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
     public let packages: [Package]
 
     /// The author of this package collection.
-    public let author: JSONPackageCollectionModel.V1.Collection.Author?
+    public let author: PackageCollectionModel.V1.Collection.Author?
 
     public init(
         name: String,
         overview: String? = nil,
         keywords: [String]? = nil,
         packages: [Package],
-        author: JSONPackageCollectionModel.V1.Collection.Author? = nil
+        author: PackageCollectionModel.V1.Collection.Author? = nil
     ) {
         self.name = name
         self.overview = overview

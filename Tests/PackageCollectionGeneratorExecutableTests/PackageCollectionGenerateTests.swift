@@ -21,7 +21,7 @@ import TSCUtility
 import XCTest
 
 final class PackageCollectionGenerateTests: XCTestCase {
-    typealias Model = JSONPackageCollectionModel.V1
+    typealias Model = PackageCollectionModel.V1
 
     func test_help() throws {
         XCTAssert(try executeCommand(command: "package-collection-generate --help")
