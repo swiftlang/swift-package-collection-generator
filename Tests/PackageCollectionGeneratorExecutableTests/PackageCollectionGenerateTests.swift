@@ -98,11 +98,15 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.1.0",
-                            packageName: "TestPackageOne",
-                            targets: [.init(name: "Foo", moduleName: "Foo")],
-                            products: [.init(name: "Foo", type: .library(.automatic), targets: ["Foo"])],
-                            toolsVersion: "5.2.0",
-                            minimumPlatformVersions: [.init(name: "macos", version: "10.15")],
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageOne",
+                                    targets: [.init(name: "Foo", moduleName: "Foo")],
+                                    products: [.init(name: "Foo", type: .library(.automatic), targets: ["Foo"])],
+                                    minimumPlatformVersions: [.init(name: "macos", version: "10.15")]
+                                ),
+                            ],
                             verifiedCompatibility: nil,
                             license: nil
                         ),
@@ -117,27 +121,35 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.2.0",
-                            packageName: "TestPackageTwo",
-                            targets: [
-                                .init(name: "Bar", moduleName: "Bar"),
-                                .init(name: "Foo", moduleName: "Foo"),
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageTwo",
+                                    targets: [
+                                        .init(name: "Bar", moduleName: "Bar"),
+                                        .init(name: "Foo", moduleName: "Foo"),
+                                    ],
+                                    products: [
+                                        .init(name: "Bar", type: .library(.automatic), targets: ["Bar"]),
+                                        .init(name: "Foo", type: .library(.automatic), targets: ["Foo"]),
+                                    ],
+                                    minimumPlatformVersions: nil
+                                ),
                             ],
-                            products: [
-                                .init(name: "Bar", type: .library(.automatic), targets: ["Bar"]),
-                                .init(name: "Foo", type: .library(.automatic), targets: ["Foo"]),
-                            ],
-                            toolsVersion: "5.2.0",
-                            minimumPlatformVersions: nil,
                             verifiedCompatibility: nil,
                             license: nil
                         ),
                         Model.Collection.Package.Version(
                             version: "0.1.0",
-                            packageName: "TestPackageTwo",
-                            targets: [.init(name: "Bar", moduleName: "Bar")],
-                            products: [.init(name: "Bar", type: .library(.automatic), targets: ["Bar"])],
-                            toolsVersion: "5.2.0",
-                            minimumPlatformVersions: nil,
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageTwo",
+                                    targets: [.init(name: "Bar", moduleName: "Bar")],
+                                    products: [.init(name: "Bar", type: .library(.automatic), targets: ["Bar"])],
+                                    minimumPlatformVersions: nil
+                                ),
+                            ],
                             verifiedCompatibility: nil,
                             license: nil
                         ),
@@ -152,11 +164,15 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "1.0.0",
-                            packageName: "TestPackageThree",
-                            targets: [.init(name: "Baz", moduleName: "Baz")],
-                            products: [.init(name: "Baz", type: .library(.automatic), targets: ["Baz"])],
-                            toolsVersion: "5.2.0",
-                            minimumPlatformVersions: nil,
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageThree",
+                                    targets: [.init(name: "Baz", moduleName: "Baz")],
+                                    products: [.init(name: "Baz", type: .library(.automatic), targets: ["Baz"])],
+                                    minimumPlatformVersions: nil
+                                ),
+                            ],
                             verifiedCompatibility: nil,
                             license: nil
                         ),

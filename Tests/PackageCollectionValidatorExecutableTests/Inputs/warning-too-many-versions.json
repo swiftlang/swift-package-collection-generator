@@ -8,63 +8,75 @@
       "versions": [
         {
           "version": "1.0.0",
-          "packageName": "PackageOne",
-          "targets": [
-            {
-              "name": "Foo",
-              "moduleName": "Foo"
+          "manifests": {
+            "5.1": {
+              "toolsVersion": "5.1",
+              "packageName": "PackageOne",
+              "targets": [
+                {
+                  "name": "Foo",
+                  "moduleName": "Foo"
+                }
+              ],
+              "products": [
+                {
+                  "name": "Foo",
+                  "type": {
+                    "library": ["automatic"]
+                  },
+                  "targets": ["Foo"]
+                }
+              ]
             }
-          ],
-          "products": [
-            {
-              "name": "Foo",
-              "type": {
-                "library": ["automatic"]
-              },
-              "targets": ["Foo"]
-            }
-          ],
-          "toolsVersion": "5.1"
+          }
         },
         {
           "version": "2.0.0",
-          "packageName": "PackageOne",
-          "targets": [
-            {
-              "name": "Foo",
-              "moduleName": "Foo"
+          "manifests": {
+            "5.1": {
+              "toolsVersion": "5.1",
+              "packageName": "PackageOne",
+              "targets": [
+                {
+                  "name": "Foo",
+                  "moduleName": "Foo"
+                }
+              ],
+              "products": [
+                {
+                  "name": "Foo",
+                  "type": {
+                    "library": ["automatic"]
+                  },
+                  "targets": ["Foo"]
+                }
+              ]
             }
-          ],
-          "products": [
-            {
-              "name": "Foo",
-              "type": {
-                "library": ["automatic"]
-              },
-              "targets": ["Foo"]
-            }
-          ],
-          "toolsVersion": "5.1"
+          }
         },
         {
           "version": "3.0.0",
-          "packageName": "PackageOne",
-          "targets": [
-            {
-              "name": "Foo",
-              "moduleName": "Foo"
+          "manifests": {
+            "5.1": {
+              "toolsVersion": "5.1",
+              "packageName": "PackageOne",
+              "targets": [
+                {
+                  "name": "Foo",
+                  "moduleName": "Foo"
+                }
+              ],
+              "products": [
+                {
+                  "name": "Foo",
+                  "type": {
+                    "library": ["automatic"]
+                  },
+                  "targets": ["Foo"]
+                }
+              ]
             }
-          ],
-          "products": [
-            {
-              "name": "Foo",
-              "type": {
-                "library": ["automatic"]
-              },
-              "targets": ["Foo"]
-            }
-          ],
-          "toolsVersion": "5.1"
+          }
         }
       ]
     }
