@@ -107,6 +107,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                     minimumPlatformVersions: [.init(name: "macos", version: "10.15")]
                                 ),
                             ],
+                            defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
                             license: nil
                         ),
@@ -136,6 +137,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                     minimumPlatformVersions: nil
                                 ),
                             ],
+                            defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
                             license: nil
                         ),
@@ -150,6 +152,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                     minimumPlatformVersions: nil
                                 ),
                             ],
+                            defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
                             license: nil
                         ),
@@ -173,6 +176,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                                     minimumPlatformVersions: nil
                                 ),
                             ],
+                            defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
                             license: nil
                         ),

@@ -217,6 +217,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         return Model.Collection.Package.Version(
             version: version,
             manifests: manifests,
+            defaultToolsVersion: defaultManifest.toolsVersion,
             verifiedCompatibility: nil,
             license: nil
         )

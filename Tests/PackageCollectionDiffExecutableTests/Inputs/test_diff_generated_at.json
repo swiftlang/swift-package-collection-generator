@@ -34,6 +34,7 @@
               ]
             }
           },
+          "defaultToolsVersion": "5.1",
           "verifiedPlatforms": [
             { "name": "macOS" },
             { "name": "iOS" },
@@ -74,7 +75,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultToolsVersion": "5.2"
         },
         {
           "version": "1.8.3",
@@ -98,7 +100,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultToolsVersion": "5.0"
         }
       ]
     }

@@ -58,6 +58,7 @@ extension PackageCollectionModel.V1.Collection.Package.Version: CustomStringConv
         Version {
                 version=\(self.version),
                 manifests=\(self.manifests),
+                defaultToolsVersion=\(self.defaultToolsVersion),
                 verifiedCompatibility=\(self.verifiedCompatibility.map { "\($0)" } ?? "nil"),
                 license=\(self.license.map { "\($0)" } ?? "nil")
             }
