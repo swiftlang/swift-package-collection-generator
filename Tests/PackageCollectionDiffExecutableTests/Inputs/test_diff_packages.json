@@ -13,23 +13,28 @@
       "versions": [
         {
           "version": "0.1.0",
-          "packageName": "PackageOne",
-          "targets": [
-            {
-              "name": "Foo",
-              "moduleName": "Foo"
+          "manifests": {
+            "5.1": {
+              "toolsVersion": "5.1",
+              "packageName": "PackageOne",
+              "targets": [
+                {
+                  "name": "Foo",
+                  "moduleName": "Foo"
+                }
+              ],
+              "products": [
+                {
+                  "name": "Foo",
+                  "type": {
+                    "library": ["automatic"]
+                  },
+                  "targets": ["Foo"]
+                }
+              ]
             }
-          ],
-          "products": [
-            {
-              "name": "Foo",
-              "type": {
-                "library": ["automatic"]
-              },
-              "targets": ["Foo"]
-            }
-          ],
-          "toolsVersion": "5.1",
+          },
+          "defaultToolsVersion": "5.1",
           "verifiedPlatforms": [
             { "name": "macOS" },
             { "name": "iOS" },

@@ -111,10 +111,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Package collection saved to \(outputAbsolutePath)", inColor: .cyan, verbose: self.verbose)
     }
 
-    private func generateMetadata(
-        for package: PackageCollectionGeneratorInput.Package,
-        jsonDecoder: JSONDecoder
-    ) throws -> Model.Collection.Package {
+    private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -168,11 +166,9 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
     }
 
-    private func generateMetadata(
-        for package: PackageCollectionGeneratorInput.Package,
-        gitDirectoryPath: AbsolutePath,
-        jsonDecoder: JSONDecoder
-    ) throws -> Model.Collection.Package {
+    private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
+                                  gitDirectoryPath: AbsolutePath,
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         // Select versions if none specified
         let versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
         // Load the manifest for each version and extract metadata
@@ -200,17 +196,37 @@ public struct PackageCollectionGenerate: ParsableCommand {
         )
     }
 
-    private func generateMetadata(
-        for version: String,
-        excludedProducts: Set<String>,
-        excludedTargets: Set<String>,
-        gitDirectoryPath: AbsolutePath,
-        jsonDecoder: JSONDecoder
-    ) throws -> Model.Collection.Package.Version {
+    private func generateMetadata(for version: String,
+                                  excludedProducts: Set<String>,
+                                  excludedTargets: Set<String>,
+                                  gitDirectoryPath: AbsolutePath,
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
 
+        let defaultManifest = try self.defaultManifest(
+            excludedProducts: excludedProducts,
+            excludedTargets: excludedTargets,
+            gitDirectoryPath: gitDirectoryPath,
+            jsonDecoder: jsonDecoder
+        )
+        // TODO: Use `describe` to obtain all manifest-related data, including version-specific manifests
+        let manifests = [defaultManifest.toolsVersion: defaultManifest]
+
+        return Model.Collection.Package.Version(
+            version: version,
+            manifests: manifests,
+            defaultToolsVersion: defaultManifest.toolsVersion,
+            verifiedCompatibility: nil,
+            license: nil
+        )
+    }
+
+    private func defaultManifest(excludedProducts: Set<String>,
+                                 excludedTargets: Set<String>,
+                                 gitDirectoryPath: AbsolutePath,
+                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest {
         // Run `swift package dump-package` to generate JSON manifest from `Package.swift`
         let manifestJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package dump-package")
         let manifest = try jsonDecoder.decode(PackageManifest.self, from: manifestJSON.data(using: .utf8) ?? Data())
@@ -242,8 +258,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
             minimumPlatformVersions = platforms.map { Model.PlatformVersion(name: $0.platformName, version: $0.version) }
         }
 
-        return Model.Collection.Package.Version(
-            version: version,
+        return Model.Collection.Package.Version.Manifest(
+            toolsVersion: manifest.toolsVersion._version,
             packageName: manifest.name,
             targets: manifest.targets.filter { publicTargets.contains($0.name) }.map { target in
                 Model.Target(
@@ -252,10 +268,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 )
             },
             products: products,
-            toolsVersion: manifest.toolsVersion._version,
-            minimumPlatformVersions: minimumPlatformVersions,
-            verifiedCompatibility: nil,
-            license: nil
+            minimumPlatformVersions: minimumPlatformVersions
         )
     }
 

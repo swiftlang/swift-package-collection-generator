@@ -16,3 +16,13 @@ for details.
 
 [`package-collection-generate`](Sources/PackageCollectionGenerator/README.md) is a Swift
 command-line tool that helps generate package collections.
+
+## Validating a Package Collection
+
+[`package-collection-validate`](Sources/PackageCollectionValidator/README.md) is a Swift
+command-line tool that validates package collections against the defined format.
+
+## Comparing Package Collections
+
+[`package-collection-diff`](Sources/PackageCollectionDiff/README.md) is a Swift
+command-line tool that compares two package collections to determine if they are different from each other. 

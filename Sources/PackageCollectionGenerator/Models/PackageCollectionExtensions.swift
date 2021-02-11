@@ -57,14 +57,25 @@ extension PackageCollectionModel.V1.Collection.Package.Version: CustomStringConv
         """
         Version {
                 version=\(self.version),
-                packageName=\(self.packageName),
-                targets=\(self.targets),
-                products=\(self.products),
-                toolsVersion=\(self.toolsVersion),
-                minimumPlatformVersions=\(self.minimumPlatformVersions.map { "\($0)" } ?? "nil"),
+                manifests=\(self.manifests),
+                defaultToolsVersion=\(self.defaultToolsVersion),
                 verifiedCompatibility=\(self.verifiedCompatibility.map { "\($0)" } ?? "nil"),
                 license=\(self.license.map { "\($0)" } ?? "nil")
             }
+        """
+    }
+}
+
+extension PackageCollectionModel.V1.Collection.Package.Version.Manifest: CustomStringConvertible {
+    public var description: String {
+        """
+        {
+                    toolsVersion=\(self.toolsVersion),
+                    packageName=\(self.packageName),
+                    targets=\(self.targets),
+                    products=\(self.products),
+                    minimumPlatformVersions=\(self.minimumPlatformVersions.map { "\($0)" } ?? "nil")
+                }
         """
     }
 }
@@ -73,9 +84,9 @@ extension PackageCollectionModel.V1.Target: CustomStringConvertible {
     public var description: String {
         """
         Target(
-                    name=\(self.name),
-                    moduleName=\(self.moduleName.map { "\($0)" } ?? "nil")
-                )
+                        name=\(self.name),
+                        moduleName=\(self.moduleName.map { "\($0)" } ?? "nil")
+                    )
         """
     }
 }
@@ -84,11 +95,17 @@ extension PackageCollectionModel.V1.Product: CustomStringConvertible {
     public var description: String {
         """
         Product(
-                    name=\(self.name),
-                    type=\(self.type),
-                    targets=\(self.targets)
-                )
+                        name=\(self.name),
+                        type=\(self.type),
+                        targets=\(self.targets)
+                    )
         """
+    }
+}
+
+extension PackageCollectionsModel.PackageCollectionModel.V1.ProductType.LibraryType: CustomStringConvertible {
+    public var description: String {
+        "\(self.rawValue)"
     }
 }
 
