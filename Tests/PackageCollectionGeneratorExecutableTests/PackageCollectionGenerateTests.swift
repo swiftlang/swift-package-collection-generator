@@ -98,6 +98,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.1.0",
+                            summary: nil,
                             manifests: [
                                 "5.2.0": Model.Collection.Package.Version.Manifest(
                                     toolsVersion: "5.2.0",
@@ -109,7 +110,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             ],
                             defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
-                            license: nil
+                            license: nil,
+                            createdAt: nil
                         ),
                     ],
                     readmeURL: nil,
@@ -122,6 +124,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "0.2.0",
+                            summary: nil,
                             manifests: [
                                 "5.2.0": Model.Collection.Package.Version.Manifest(
                                     toolsVersion: "5.2.0",
@@ -139,10 +142,12 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             ],
                             defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
-                            license: nil
+                            license: nil,
+                            createdAt: nil
                         ),
                         Model.Collection.Package.Version(
                             version: "0.1.0",
+                            summary: nil,
                             manifests: [
                                 "5.2.0": Model.Collection.Package.Version.Manifest(
                                     toolsVersion: "5.2.0",
@@ -154,7 +159,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             ],
                             defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
-                            license: nil
+                            license: nil,
+                            createdAt: nil
                         ),
                     ],
                     readmeURL: nil,
@@ -167,6 +173,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     versions: [
                         Model.Collection.Package.Version(
                             version: "1.0.0",
+                            summary: nil,
                             manifests: [
                                 "5.2.0": Model.Collection.Package.Version.Manifest(
                                     toolsVersion: "5.2.0",
@@ -178,7 +185,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             ],
                             defaultToolsVersion: "5.2.0",
                             verifiedCompatibility: nil,
-                            license: nil
+                            license: nil,
+                            createdAt: nil
                         ),
                     ],
                     readmeURL: nil,
