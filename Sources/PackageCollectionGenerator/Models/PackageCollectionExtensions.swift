@@ -19,7 +19,7 @@ extension PackageCollectionModel.V1.Collection: CustomStringConvertible {
         """
         Collection {
             name=\(self.name),
-            overview=\(self.overview ?? "nil"),
+            overview="\(self.overview ?? "nil")",
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             packages=\(self.packages),
             formatVersion=\(self.formatVersion),
@@ -42,7 +42,7 @@ extension PackageCollectionModel.V1.Collection.Package: CustomStringConvertible 
         """
         Package {
             url=\(self.url),
-            summary=\(self.summary ?? "nil"),
+            summary="\(self.summary ?? "nil")",
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             versions=\(self.versions),
             readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil"),
@@ -57,10 +57,12 @@ extension PackageCollectionModel.V1.Collection.Package.Version: CustomStringConv
         """
         Version {
                 version=\(self.version),
+                summary="\(self.summary ?? "nil")",
                 manifests=\(self.manifests),
                 defaultToolsVersion=\(self.defaultToolsVersion),
                 verifiedCompatibility=\(self.verifiedCompatibility.map { "\($0)" } ?? "nil"),
-                license=\(self.license.map { "\($0)" } ?? "nil")
+                license=\(self.license.map { "\($0)" } ?? "nil"),
+                createdAt=\(self.createdAt.map { "\($0)" } ?? "nil")
             }
         """
     }

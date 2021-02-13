@@ -205,6 +205,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
 
+        let gitTagInfo = try GitUtilities.tagInfo(version, for: gitDirectoryPath)
+
         let defaultManifest = try self.defaultManifest(
             excludedProducts: excludedProducts,
             excludedTargets: excludedTargets,
@@ -216,10 +218,12 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
         return Model.Collection.Package.Version(
             version: version,
+            summary: gitTagInfo?.message,
             manifests: manifests,
             defaultToolsVersion: defaultManifest.toolsVersion,
             verifiedCompatibility: nil,
-            license: nil
+            license: nil,
+            createdAt: gitTagInfo?.createdAt
         )
     }
 

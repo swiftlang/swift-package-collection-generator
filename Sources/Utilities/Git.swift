@@ -34,4 +34,35 @@ public enum GitUtilities {
         let tags = output.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         return tags
     }
+
+    public static func tagInfo(_ tag: String, for gitDirectoryPath: AbsolutePath) throws -> GitTagInfo? {
+        // If a tag is annotated (i.e., has a message), this command will return "tag", otherwise it will return "commit".
+        let tagType = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "cat-file", "-t", tag).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagType == "tag" else {
+            return nil
+        }
+        // The following commands only make sense for annotated tag. Otherwise, `contents` would be
+        // the message of the commit that the tag points to, which isn't always appropriate, and
+        // `taggerdate` would be empty
+        let message = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "tag", "-l", "--format=%(contents:subject)", tag).trimmingCharacters(in: .whitespacesAndNewlines)
+        // This shows the date when the tag was created. This would be empty if the tag was created on GitHub as part of a release.
+        let createdAt = try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "tag", "-l", "%(taggerdate:iso8601-strict)", tag).trimmingCharacters(in: .whitespacesAndNewlines)
+        return GitTagInfo(message: message, createdAt: createdAt)
+    }
+}
+
+public struct GitTagInfo {
+    public let message: String
+    public let createdAt: Date?
+
+    private static let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        return dateFormatter
+    }()
+
+    init(message: String, createdAt: String) {
+        self.message = message
+        self.createdAt = Self.dateFormatter.date(from: createdAt)
+    }
 }
