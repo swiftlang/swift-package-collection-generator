@@ -13,12 +13,14 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import XCTest
+
+import Basics
 @testable import PackageCollectionGenerator
 import PackageCollectionsModel
 @testable import TestUtilities
 import TSCBasic
 import TSCUtility
-import XCTest
 
 final class PackageCollectionGenerateTests: XCTestCase {
     typealias Model = PackageCollectionModel.V1
@@ -42,15 +44,6 @@ final class PackageCollectionGenerateTests: XCTestCase {
             let repoThreeArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoThree.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoThreeArchivePath.pathString])
 
-            let jsonEncoder = JSONEncoder()
-            if #available(macOS 10.15, *) {
-                #if os(macOS)
-                jsonEncoder.outputFormatting = [.withoutEscapingSlashes]
-                #else
-                jsonEncoder.outputFormatting = [.sortedKeys]
-                #endif
-            }
-
             // Prepare input.json
             let input = PackageCollectionGeneratorInput(
                 name: "Test Package Collection",
@@ -72,6 +65,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     ),
                 ]
             )
+            let jsonEncoder = JSONEncoder.makeWithDefaults()
             let inputData = try jsonEncoder.encode(input)
             let inputFilePath = tmpDir.appending(component: "input.json")
             try localFileSystem.writeFileContents(inputFilePath, bytes: ByteString(inputData))
@@ -194,8 +188,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 ),
             ]
 
-            let jsonDecoder = JSONDecoder()
-            jsonDecoder.dateDecodingStrategy = .iso8601
+            let jsonDecoder = JSONDecoder.makeWithDefaults()
 
             // Assert the generated package collection
             let collectionData = try localFileSystem.readFileContents(outputFilePath).contents

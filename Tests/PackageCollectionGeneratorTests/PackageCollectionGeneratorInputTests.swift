@@ -13,10 +13,10 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import TSCBasic
 import XCTest
 
 @testable import PackageCollectionGenerator
+import TSCBasic
 
 class PackageCollectionGeneratorInputTests: XCTestCase {
     func testLoadFromFile() throws {

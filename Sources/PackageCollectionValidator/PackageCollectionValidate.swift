@@ -14,6 +14,8 @@
 
 import ArgumentParser
 import Foundation
+
+import Basics
 import enum PackageCollections.ValidationError
 import struct PackageCollections.ValidationMessage
 import enum PackageCollectionsModel.PackageCollectionModel
@@ -45,8 +47,7 @@ public struct PackageCollectionValidate: ParsableCommand {
 
         let validator = Model.Validator()
 
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
+        let jsonDecoder = JSONDecoder.makeWithDefaults()
 
         let collection: Model.Collection
         do {

@@ -12,10 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+import XCTest
+
 @testable import PackageCollectionValidator
 @testable import TestUtilities
 import TSCBasic
-import XCTest
 
 final class PackageCollectionValidateTests: XCTestCase {
     func test_help() throws {

@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+
 import PackageCollectionsModel
 
 /// Input for the `package-collection-generate` command
