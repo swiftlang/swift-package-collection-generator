@@ -14,6 +14,8 @@
 
 import ArgumentParser
 import Foundation
+
+import Basics
 import PackageCollectionsModel
 import PackageModel
 import TSCBasic
@@ -58,7 +60,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Using input file located at \(self.inputPath)", inColor: .cyan, verbose: self.verbose)
 
         // Get the list of packages to process
-        let jsonDecoder = JSONDecoder()
+        let jsonDecoder = JSONDecoder.makeWithDefaults()
         let input = try jsonDecoder.decode(PackageCollectionGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
         print("\(input)", verbose: self.verbose)
 
@@ -85,16 +87,6 @@ public struct PackageCollectionGenerate: ParsableCommand {
             generatedBy: input.author
         )
 
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.dateEncodingStrategy = .iso8601
-        if #available(macOS 10.15, *) {
-            #if os(macOS)
-            jsonEncoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-            #else
-            jsonEncoder.outputFormatting = [.sortedKeys]
-            #endif
-        }
-
         // Make sure the output directory exists
         let outputAbsolutePath: AbsolutePath
         do {
@@ -106,6 +98,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
         // Write the package collection
+        let jsonEncoder = JSONEncoder.makeWithDefaults(prettified: false)
         let jsonData = try jsonEncoder.encode(packageCollection)
         try jsonData.write(to: URL(fileURLWithPath: outputAbsolutePath.pathString))
         print("Package collection saved to \(outputAbsolutePath)", inColor: .cyan, verbose: self.verbose)

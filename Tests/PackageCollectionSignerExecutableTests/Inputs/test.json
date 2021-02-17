@@ -1,0 +1,38 @@
+{
+  "name": "Sample Package Collection",
+  "formatVersion": "1.0",
+  "generatedAt": "2020-10-22T06:03:52Z",
+  "packages": [
+    {
+      "url": "https://www.example.com/repos/RepoOne.git",
+      "summary": "Package One",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "manifests": {
+            "5.1": {
+              "toolsVersion": "5.1",
+              "packageName": "PackageOne",
+              "targets": [
+                {
+                  "name": "Foo",
+                  "moduleName": "Foo"
+                }
+              ],
+              "products": [
+                {
+                  "name": "Foo",
+                  "type": {
+                    "library": ["automatic"]
+                  },
+                  "targets": ["Foo"]
+                }
+              ]
+            }
+          },
+          "defaultToolsVersion": "5.1"
+        }
+      ]
+    }
+  ]
+}

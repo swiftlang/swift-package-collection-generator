@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+
 import PackageModel
 
 // Note: Not using SwiftPM's `PackageModel.Manifest` to avoid issues with
