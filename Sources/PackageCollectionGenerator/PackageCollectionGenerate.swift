@@ -320,6 +320,8 @@ extension PackageCollectionModel.V1.ProductType {
             self = .library(.init(from: libraryType))
         case .executable:
             self = .executable
+        case .extension:
+            self = .extension
         case .test:
             self = .test
         }
