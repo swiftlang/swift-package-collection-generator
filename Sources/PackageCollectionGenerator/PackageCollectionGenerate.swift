@@ -321,7 +321,7 @@ extension PackageCollectionModel.V1.ProductType {
         case .executable:
             self = .executable
         case .plugin:
-            self = .extension
+            self = .plugin
         case .test:
             self = .test
         }
