@@ -39,7 +39,7 @@ The input is a JSON document that contains metadata about the collection and lis
 Collection metadata:
 
 * `name`: The name of the package collection, for display purposes only.
-* `description`: A description of the package collection. **Optional.**
+* `overview`: A description of the package collection. **Optional.**
 * `keywords`: An array of keywords that the collection is associated with. **Optional.**
 * `author`: The author of this package collection. **Optional.**
     * `name`: The author name.
@@ -48,7 +48,7 @@ Collection metadata:
 Each item in the `packages` array is a package object with the following fields:
 
 * `url`: The URL of the package. Currently only Git repository URLs are supported.
-* `description`: A description of the package. **Optional.**
+* `summary`: A description of the package. **Optional.**
 * `keywords`: An array of keywords that the package is associated with. **Optional.**
 * `versions`: An array of package versions to include. **Optional.** If not specified, the generate will select the most recent versions.
 * `excludedProducts`: An array of product names to exclude. **Optional.**
@@ -60,12 +60,12 @@ Each item in the `packages` array is a package object with the following fields:
 ```json
 {
   "name": "Sample Package Collection",
-  "description": "This is a sample package collection listing made-up packages.",
+  "overview": "This is a sample package collection listing made-up packages.",
   "keywords": ["sample package collection"],
   "packages": [
     {
       "url": "https://www.example.com/repos/RepoOne.git",
-      "description": "Package One",
+      "summary": "Package One",
       "keywords": ["sample package"],
       "versions": ["0.2.0", "0.1.0"],
       "excludedProducts": ["Foo"],
