@@ -20,6 +20,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "0.3.0")),
         // FIXME: need semver
         .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("main")),
+        .package(url: "https://github.com/swift-server/swift-backtrace.git", .upToNextMajor(from: "1.1.0")),
     ],
     targets: [
         .target(name: "Utilities", dependencies: [
@@ -30,6 +31,7 @@ let package = Package(
             "Utilities",
             .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .product(name: "Backtrace", package: "swift-backtrace"),
         ]),
         .target(name: "PackageCollectionGeneratorExecutable", dependencies: ["PackageCollectionGenerator"]),
 
@@ -37,6 +39,7 @@ let package = Package(
             "Utilities",
             .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .product(name: "Backtrace", package: "swift-backtrace"),
         ]),
         .target(name: "PackageCollectionSignerExecutable", dependencies: ["PackageCollectionSigner"]),
 
@@ -44,6 +47,7 @@ let package = Package(
             "Utilities",
             .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .product(name: "Backtrace", package: "swift-backtrace"),
         ]),
         .target(name: "PackageCollectionValidatorExecutable", dependencies: ["PackageCollectionValidator"]),
 
@@ -51,6 +55,7 @@ let package = Package(
             "Utilities",
             .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .product(name: "Backtrace", package: "swift-backtrace"),
         ]),
         .target(name: "PackageCollectionDiffExecutable", dependencies: ["PackageCollectionDiff"]),
 

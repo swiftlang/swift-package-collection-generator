@@ -18,6 +18,7 @@ import ArgumentParser
 import Dispatch
 import Foundation
 
+import Backtrace
 import Basics
 import PackageCollectionsModel
 import PackageCollectionsSigning
@@ -54,6 +55,8 @@ public struct PackageCollectionSign: ParsableCommand {
     }
 
     internal func _run(signer: PackageCollectionSigner?) throws {
+        Backtrace.install()
+
         guard !self.certChainPaths.isEmpty else {
             printError("Certificate chain cannot be empty")
             throw PackageCollectionSigningError.emptyCertChain

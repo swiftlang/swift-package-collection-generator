@@ -15,6 +15,7 @@
 import ArgumentParser
 import Foundation
 
+import Backtrace
 import Basics
 import enum PackageCollections.ValidationError
 import struct PackageCollections.ValidationMessage
@@ -41,6 +42,7 @@ public struct PackageCollectionValidate: ParsableCommand {
     public init() {}
 
     public func run() throws {
+        Backtrace.install()
         Process.verbose = self.verbose
 
         print("Using input file located at \(self.inputPath)", inColor: .cyan, verbose: self.verbose)

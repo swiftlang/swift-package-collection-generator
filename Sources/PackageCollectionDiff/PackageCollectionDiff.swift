@@ -15,6 +15,7 @@
 import ArgumentParser
 import Foundation
 
+import Backtrace
 import Basics
 import PackageCollectionsModel
 import TSCBasic
@@ -39,6 +40,7 @@ public struct PackageCollectionDiff: ParsableCommand {
     public init() {}
 
     public func run() throws {
+        Backtrace.install()
         Process.verbose = self.verbose
 
         print("Comparing collections located at \(self.collectionOnePath) and \(self.collectionTwoPath)", inColor: .cyan, verbose: self.verbose)
