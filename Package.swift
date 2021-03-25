@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "0.3.0")),
         // FIXME: need semver
-        .package(name: "SwiftPM", url: "https://github.com/yim-lee/swift-package-manager.git", .branch("wire-signing-all")),
+        .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("main")),
     ],
     targets: [
         .target(name: "Utilities", dependencies: [
