@@ -70,12 +70,12 @@ public struct PackageCollectionSign: ParsableCommand {
         let collection = try jsonDecoder.decode(Model.Collection.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
 
         let privateKeyURL = URL(fileURLWithPath: self.privateKeyPath)
-        let certChainURLs = self.certChainPaths.map(URL.init(fileURLWithPath:))
+        let certChainURLs: [URL] = self.certChainPaths.map { ensureAbsolute(path: $0).asURL }
 
         try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
             // The last item in the array is the root certificate and we want to trust it, so here we
             // create a temp directory, copy the root certificate to it, and make it the trustedRootCertsDir.
-            let rootCertPath = AbsolutePath(certChainPaths.last!) // !-safe since certChain cannot be empty at this point
+            let rootCertPath = AbsolutePath(certChainURLs.last!.path) // !-safe since certChain cannot be empty at this point
             let rootCertFilename = rootCertPath.components.last!
             try localFileSystem.copy(from: rootCertPath, to: tmpDir.appending(component: rootCertFilename))
 
@@ -86,12 +86,7 @@ public struct PackageCollectionSign: ParsableCommand {
             }
 
             // Make sure the output directory exists
-            let outputAbsolutePath: AbsolutePath
-            do {
-                outputAbsolutePath = try AbsolutePath(validating: self.outputPath)
-            } catch {
-                outputAbsolutePath = AbsolutePath(self.outputPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
-            }
+            let outputAbsolutePath = ensureAbsolute(path: self.outputPath)
             let outputDirectory = outputAbsolutePath.parentDirectory
             try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
