@@ -12,10 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+import XCTest
+
 @testable import PackageCollectionDiff
 @testable import TestUtilities
 import TSCBasic
-import XCTest
 
 final class PackageCollectionDiffTests: XCTestCase {
     func test_help() throws {

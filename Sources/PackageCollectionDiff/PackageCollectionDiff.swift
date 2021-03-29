@@ -14,6 +14,9 @@
 
 import ArgumentParser
 import Foundation
+
+import Backtrace
+import Basics
 import PackageCollectionsModel
 import TSCBasic
 import Utilities
@@ -37,12 +40,12 @@ public struct PackageCollectionDiff: ParsableCommand {
     public init() {}
 
     public func run() throws {
+        Backtrace.install()
         Process.verbose = self.verbose
 
         print("Comparing collections located at \(self.collectionOnePath) and \(self.collectionTwoPath)", inColor: .cyan, verbose: self.verbose)
 
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
+        let jsonDecoder = JSONDecoder.makeWithDefaults()
 
         let collectionOne = try self.parsePackageCollection(at: self.collectionOnePath, using: jsonDecoder)
         let collectionTwo = try self.parsePackageCollection(at: self.collectionTwoPath, using: jsonDecoder)

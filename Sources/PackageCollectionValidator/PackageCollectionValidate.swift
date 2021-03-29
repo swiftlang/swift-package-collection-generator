@@ -14,6 +14,9 @@
 
 import ArgumentParser
 import Foundation
+
+import Backtrace
+import Basics
 import enum PackageCollections.ValidationError
 import struct PackageCollections.ValidationMessage
 import enum PackageCollectionsModel.PackageCollectionModel
@@ -39,14 +42,14 @@ public struct PackageCollectionValidate: ParsableCommand {
     public init() {}
 
     public func run() throws {
+        Backtrace.install()
         Process.verbose = self.verbose
 
         print("Using input file located at \(self.inputPath)", inColor: .cyan, verbose: self.verbose)
 
         let validator = Model.Validator()
 
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
+        let jsonDecoder = JSONDecoder.makeWithDefaults()
 
         let collection: Model.Collection
         do {
