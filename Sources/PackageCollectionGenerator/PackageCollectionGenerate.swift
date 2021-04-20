@@ -121,10 +121,10 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
-            let regex = try NSRegularExpression(pattern: "([^/]+)\\.git$", options: .caseInsensitive)
+            let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/.]+)(\.git)?$"#, options: .caseInsensitive)
 
             if let match = regex.firstMatch(in: repositoryURL, options: [], range: NSRange(location: 0, length: repositoryURL.count)) {
-                if let range = Range(match.range(at: 1), in: repositoryURL) {
+                if let range = Range(match.range(at: 3), in: repositoryURL) {
                     let repositoryName = String(repositoryURL[range])
                     print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
 
