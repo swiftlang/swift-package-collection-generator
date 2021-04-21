@@ -199,4 +199,10 @@ final class PackageCollectionGenerateTests: XCTestCase {
             XCTAssertEqual(expectedPackages, packageCollection.packages)
         }
     }
+
+    func test_respositoryName() throws {
+        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("https://test.com/testOrg/FooBar.git"))
+        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("https://test.com/testOrg/FooBar"))
+        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("git@test.com:testOrg/FooBar.git"))
+    }
 }

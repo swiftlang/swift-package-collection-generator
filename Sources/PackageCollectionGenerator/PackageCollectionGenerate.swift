@@ -121,30 +121,25 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
-            let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/.]+)(\.git)?$"#, options: .caseInsensitive)
+            if let repositoryName = try PackageCollectionGenerate.repositoryName(repositoryURL) {
+                print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
 
-            if let match = regex.firstMatch(in: repositoryURL, options: [], range: NSRange(location: 0, length: repositoryURL.count)) {
-                if let range = Range(match.range(at: 3), in: repositoryURL) {
-                    let repositoryName = String(repositoryURL[range])
-                    print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
-
-                    let gitDirectoryPath = workingDirectoryAbsolutePath.appending(component: repositoryName)
-                    if localFileSystem.exists(gitDirectoryPath) {
-                        // If directory exists, assume it has been cloned previously
-                        print("\(gitDirectoryPath) exists", inColor: .yellow, verbose: self.verbose)
-                        try GitUtilities.fetch(repositoryURL, at: gitDirectoryPath)
-                    } else {
-                        // Else clone it
-                        print("\(gitDirectoryPath) does not exist", inColor: .yellow, verbose: self.verbose)
-                        try GitUtilities.clone(repositoryURL, to: gitDirectoryPath)
-                    }
-
-                    return try self.generateMetadata(
-                        for: package,
-                        gitDirectoryPath: gitDirectoryPath,
-                        jsonDecoder: jsonDecoder
-                    )
+                let gitDirectoryPath = workingDirectoryAbsolutePath.appending(component: repositoryName)
+                if localFileSystem.exists(gitDirectoryPath) {
+                    // If directory exists, assume it has been cloned previously
+                    print("\(gitDirectoryPath) exists", inColor: .yellow, verbose: self.verbose)
+                    try GitUtilities.fetch(repositoryURL, at: gitDirectoryPath)
+                } else {
+                    // Else clone it
+                    print("\(gitDirectoryPath) does not exist", inColor: .yellow, verbose: self.verbose)
+                    try GitUtilities.clone(repositoryURL, to: gitDirectoryPath)
                 }
+
+                return try self.generateMetadata(
+                    for: package,
+                    gitDirectoryPath: gitDirectoryPath,
+                    jsonDecoder: jsonDecoder
+                )
             }
         }
 
@@ -305,6 +300,15 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Default versions: \(versions)", inColor: .green, verbose: self.verbose)
 
         return versions
+    }
+
+    static func repositoryName(_ repositoryURL: String) throws -> String? {
+        let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/.]+)(\.git)?$"#, options: .caseInsensitive)
+        guard let match = regex.firstMatch(in: repositoryURL, options: [], range: NSRange(location: 0, length: repositoryURL.count)),
+            let range = Range(match.range(at: 3), in: repositoryURL) else {
+            return nil
+        }
+        return String(repositoryURL[range])
     }
 }
 
