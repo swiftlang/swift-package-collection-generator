@@ -64,6 +64,7 @@ let package = Package(
             .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
         ]),
 
+        .testTarget(name: "UtilitiesTests", dependencies: ["Utilities"]),
         .testTarget(name: "PackageCollectionGeneratorTests", dependencies: ["PackageCollectionGenerator"]),
         .testTarget(name: "PackageCollectionGeneratorExecutableTests", dependencies: [
             "PackageCollectionGeneratorExecutable",

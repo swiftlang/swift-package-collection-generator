@@ -24,6 +24,9 @@ OPTIONS:
 
                           Temporary directories will be used instead if this argument is not specified. 
   --revision <revision>   The revision number of the generated package collection 
+  --auth-token <auth-token>
+                          Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
+                          hosting platform APIs. Currently only GitHub APIs are supported. An example token would be github:github.com:<TOKEN>.   
   --verbose               Show extra logging for debugging purposes 
   -h, --help              Show help information.
 ```
@@ -81,3 +84,11 @@ Each item in the `packages` array is a package object with the following fields:
   }
 }
 ```
+
+## Package Metadata from Other Providers
+
+The generator can retrieve package metadata such as summary, README URL, license, etc. from GitHub so that it is not necessary to provide them in the [collection input file](#input-format). To use this feature:
+1. Create a [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for each of the GitHub instances where packages in the collection are hosted.
+2. Set the ` --auth-token` option when running the generator. Auth token is in the format of `<TYPE>:<HOST>:<TOKEN>`. The only supported `TYPE` is `github`, e.g., `github:github.com:<TOKEN>`. Multiple auth tokens can be used and they should be separated by a space.
+
+Property values defined in the collection input file have higher precedence than those retrieved through GitHub APIs. 

@@ -27,7 +27,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
 
     func test_help() throws {
         XCTAssert(try executeCommand(command: "package-collection-generate --help")
-            .stdout.contains("USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]"))
+            .stdout.contains("USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--auth-token <auth-token> ...] [--verbose]"))
     }
 
     func test_endToEnd() throws {
@@ -198,11 +198,5 @@ final class PackageCollectionGenerateTests: XCTestCase {
             XCTAssertEqual(input.keywords, packageCollection.keywords)
             XCTAssertEqual(expectedPackages, packageCollection.packages)
         }
-    }
-
-    func test_respositoryName() throws {
-        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("https://test.com/testOrg/FooBar.git"))
-        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("https://test.com/testOrg/FooBar"))
-        XCTAssertEqual("FooBar", try PackageCollectionGenerate.repositoryName("git@test.com:testOrg/FooBar.git"))
     }
 }
