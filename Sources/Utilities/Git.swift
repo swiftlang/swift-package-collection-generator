@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+
 import TSCBasic
 import TSCUtility
 
@@ -64,5 +65,31 @@ public struct GitTagInfo {
     init(message: String, createdAt: String) {
         self.message = message
         self.createdAt = Self.dateFormatter.date(from: createdAt)
+    }
+}
+
+public struct GitURL {
+    public let host: String
+    public let owner: String
+    public let repository: String
+
+    public static func from(_ gitURL: String) -> GitURL? {
+        do {
+            let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/.]+)(\.git)?$"#, options: .caseInsensitive)
+            if let match = regex.firstMatch(in: gitURL, options: [], range: NSRange(location: 0, length: gitURL.count)) {
+                if let hostRange = Range(match.range(at: 1), in: gitURL),
+                    let ownerRange = Range(match.range(at: 2), in: gitURL),
+                    let repoRange = Range(match.range(at: 3), in: gitURL) {
+                    let host = String(gitURL[hostRange])
+                    let owner = String(gitURL[ownerRange])
+                    let repository = String(gitURL[repoRange])
+
+                    return GitURL(host: host, owner: owner, repository: repository)
+                }
+            }
+            return nil
+        } catch {
+            return nil
+        }
     }
 }

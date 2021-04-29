@@ -48,6 +48,13 @@ public struct PackageCollectionGenerate: ParsableCommand {
     @Option(help: "The revision number of the generated package collection")
     private var revision: Int?
 
+    @Option(parsing: .upToNextOption, help:
+        """
+        Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
+        hosting platform APIs. Currently only GitHub APIs are supported. An example token would be github:github.com:<TOKEN>.
+        """)
+    private var authToken: [String] = []
+
     @Flag(name: .long, help: "Show extra logging for debugging purposes")
     private var verbose: Bool = false
 
@@ -59,6 +66,19 @@ public struct PackageCollectionGenerate: ParsableCommand {
         Backtrace.install()
         Process.verbose = self.verbose
 
+        // Parse auth tokens
+        let authTokens = self.authToken.reduce(into: [AuthTokenType: String]()) { authTokens, authToken in
+            let parts = authToken.components(separatedBy: ":")
+            guard parts.count == 3, let type = AuthTokenType.from(type: parts[0], host: parts[1]) else {
+                print("Ignoring invalid auth token '\(authToken)'", inColor: .yellow, verbose: self.verbose)
+                return
+            }
+            authTokens[type] = parts[2]
+        }
+        if !self.authToken.isEmpty {
+            print("Using auth tokens: \(authTokens.keys)", inColor: .cyan, verbose: self.verbose)
+        }
+
         print("Using input file located at \(self.inputPath)", inColor: .cyan, verbose: self.verbose)
 
         // Get the list of packages to process
@@ -66,10 +86,12 @@ public struct PackageCollectionGenerate: ParsableCommand {
         let input = try jsonDecoder.decode(PackageCollectionGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
         print("\(input)", verbose: self.verbose)
 
+        let githubPackageMetadataProvider = GitHubPackageMetadataProvider(authTokens: authTokens)
+
         // Generate metadata for each package
         let packages: [Model.Collection.Package] = input.packages.compactMap { package in
             do {
-                let packageMetadata = try self.generateMetadata(for: package, jsonDecoder: jsonDecoder)
+                let packageMetadata = try self.generateMetadata(for: package, metadataProvider: githubPackageMetadataProvider, jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
                 return packageMetadata
             } catch {
@@ -107,6 +129,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     }
 
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
+                                  metadataProvider: PackageMetadataProvider,
                                   jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
@@ -121,7 +144,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
             // Extract directory name from repository URL
             let repositoryURL = package.url.absoluteString
-            if let repositoryName = try PackageCollectionGenerate.repositoryName(repositoryURL) {
+            if let repositoryName = GitURL.from(repositoryURL)?.repository {
                 print("Extracted repository name from URL: \(repositoryName)", inColor: .green, verbose: self.verbose)
 
                 let gitDirectoryPath = workingDirectoryAbsolutePath.appending(component: repositoryName)
@@ -138,6 +161,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 return try self.generateMetadata(
                     for: package,
                     gitDirectoryPath: gitDirectoryPath,
+                    metadataProvider: metadataProvider,
                     jsonDecoder: jsonDecoder
                 )
             }
@@ -151,6 +175,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             return try self.generateMetadata(
                 for: package,
                 gitDirectoryPath: tmpDir,
+                metadataProvider: metadataProvider,
                 jsonDecoder: jsonDecoder
             )
         }
@@ -158,7 +183,13 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   gitDirectoryPath: AbsolutePath,
+                                  metadataProvider: PackageMetadataProvider,
                                   jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
+        let additionalMetadata = try? tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
+        if let additionalMetadata = additionalMetadata {
+            print("Retrieved additional metadata: \(additionalMetadata)", verbose: self.verbose)
+        }
+
         // Select versions if none specified
         let versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
         // Load the manifest for each version and extract metadata
@@ -178,11 +209,11 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
         return Model.Collection.Package(
             url: package.url,
-            summary: package.summary,
-            keywords: package.keywords,
+            summary: package.summary ?? additionalMetadata?.summary,
+            keywords: package.keywords ?? additionalMetadata?.keywords,
             versions: packageVersions,
-            readmeURL: package.readmeURL,
-            license: nil
+            readmeURL: package.readmeURL ?? additionalMetadata?.readmeURL,
+            license: additionalMetadata?.license
         )
     }
 
@@ -300,15 +331,6 @@ public struct PackageCollectionGenerate: ParsableCommand {
         print("Default versions: \(versions)", inColor: .green, verbose: self.verbose)
 
         return versions
-    }
-
-    static func repositoryName(_ repositoryURL: String) throws -> String? {
-        let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/.]+)(\.git)?$"#, options: .caseInsensitive)
-        guard let match = regex.firstMatch(in: repositoryURL, options: [], range: NSRange(location: 0, length: repositoryURL.count)),
-            let range = Range(match.range(at: 3), in: repositoryURL) else {
-            return nil
-        }
-        return String(repositoryURL[range])
     }
 }
 
