@@ -73,7 +73,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 print("Ignoring invalid auth token '\(authToken)'", inColor: .yellow, verbose: self.verbose)
                 return
             }
-            authTokens[type] = parts[1]
+            authTokens[type] = parts[2]
         }
         if !self.authToken.isEmpty {
             print("Using auth tokens: \(authTokens.keys)", inColor: .cyan, verbose: self.verbose)

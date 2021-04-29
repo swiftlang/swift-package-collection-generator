@@ -45,7 +45,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
     func testGood() throws {
         let repoURL = URL(string: "https://github.com/octocat/Hello-World.git")!
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
-        let authTokens = [AuthTokenType.github("api.github.com"): "foo"]
+        let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
         let handler: HTTPClient.Handler = { request, _, completion in
             guard request.headers.get("Authorization").first == "token \(authTokens.first!.value)" else {
@@ -90,7 +90,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
     func testInvalidAuthToken() throws {
         let repoURL = URL(string: "https://github.com/octocat/Hello-World.git")!
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
-        let authTokens = [AuthTokenType.github("api.github.com"): "foo"]
+        let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
         let handler: HTTPClient.Handler = { request, _, completion in
             if request.headers.get("Authorization").first == "token \(authTokens.first!.value)" {
@@ -114,7 +114,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
     func testRepoNotFound() throws {
         let repoURL = URL(string: "https://github.com/octocat/Hello-World.git")!
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
-        let authTokens = [AuthTokenType.github("api.github.com"): "foo"]
+        let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
         let handler: HTTPClient.Handler = { _, _, completion in
             completion(.success(.init(statusCode: 404)))
@@ -133,7 +133,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
     func testOthersNotFound() throws {
         let repoURL = URL(string: "https://github.com/octocat/Hello-World.git")!
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
-        let authTokens = [AuthTokenType.github("api.github.com"): "foo"]
+        let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
         let handler: HTTPClient.Handler = { request, _, completion in
             guard request.headers.get("Authorization").first == "token \(authTokens.first!.value)" else {
@@ -206,7 +206,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
 
         var authTokens: [AuthTokenType: String] = [:]
         if let token = ProcessEnv.vars["GITHUB_API_TOKEN"] {
-            authTokens[.github("api.github.com")] = token
+            authTokens[.github("github.com")] = token
         }
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)

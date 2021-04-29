@@ -20,6 +20,8 @@ import PackageCollectionsModel
 import Utilities
 
 struct GitHubPackageMetadataProvider: PackageMetadataProvider {
+    private static let apiHostPrefix = "api."
+
     private let authTokens: [AuthTokenType: String]
     private let httpClient: HTTPClient
     private let decoder: JSONDecoder
@@ -117,7 +119,7 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
 
     internal func apiURL(_ url: String) -> Foundation.URL? {
         if let gitURL = GitURL.from(url) {
-            return URL(string: "https://api.\(gitURL.host)/repos/\(gitURL.owner)/\(gitURL.repository)")
+            return URL(string: "https://\(Self.apiHostPrefix)\(gitURL.host)/repos/\(gitURL.owner)/\(gitURL.repository)")
         }
         return nil
     }
@@ -128,7 +130,8 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
         options.validResponseCodes = validResponseCodes
         options.authorizationProvider = { url in
             url.host.flatMap { host in
-                self.authTokens[.github(host)].flatMap { token in "token \(token)" }
+                let host = host.hasPrefix(Self.apiHostPrefix) ? String(host.dropFirst(Self.apiHostPrefix.count)) : host
+                return self.authTokens[.github(host)].flatMap { token in "token \(token)" }
             }
         }
         return options
