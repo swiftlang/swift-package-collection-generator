@@ -307,18 +307,19 @@ public struct PackageCollectionGenerate: ParsableCommand {
         //  - At most 3 minor versions per major version
         //  - Maximum of 2 majors
         //  - Maximum of 6 versions total
-        var allVersions = tags
-            .map{ $0.hasPrefix("v") ? String($0.dropFirst(1)) : $0 } // remove common "v" prefix which is supported by SwiftPM
-            .compactMap { Version(string: $0) }
-        allVersions.sort(by: >)
+        var allVersions: [(tag: String, version: Version)] = tags.compactMap { tag in
+            // Remove common "v" prefix which is supported by SwiftPM
+            Version(string: tag.hasPrefix("v") ? String(tag.dropFirst(1)) : tag).map { (tag: tag, version: $0) }
+        }
+        allVersions.sort { $0.version > $1.version }
 
         var versions = [String]()
         var currentMajor: Int?
         var majorCount = 0
         var minorCount = 0
-        for version in allVersions {
-            if version.major != currentMajor {
-                currentMajor = version.major
+        for tagVersion in allVersions {
+            if tagVersion.version.major != currentMajor {
+                currentMajor = tagVersion.version.major
                 majorCount += 1
                 minorCount = 0
             }
@@ -326,7 +327,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             guard majorCount <= 2 else { break }
             guard minorCount < 3 else { continue }
 
-            versions.append(version.description)
+            versions.append(tagVersion.tag)
             minorCount += 1
         }
 
