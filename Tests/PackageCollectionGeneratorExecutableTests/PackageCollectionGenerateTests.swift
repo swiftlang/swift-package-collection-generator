@@ -199,4 +199,123 @@ final class PackageCollectionGenerateTests: XCTestCase {
             XCTAssertEqual(expectedPackages, packageCollection.packages)
         }
     }
+
+    func test_excludedVersions() throws {
+        try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
+            // TestRepoOne has tags [0.1.0]
+            let repoOneArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
+            try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoOneArchivePath.pathString])
+
+            // TestRepoTwo has tags [0.1.0, 0.2.0]
+            let repoTwoArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoTwo.tgz")
+            try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoTwoArchivePath.pathString])
+
+            // Prepare input.json
+            let input = PackageCollectionGeneratorInput(
+                name: "Test Package Collection",
+                overview: "A few test packages",
+                keywords: ["swift packages"],
+                packages: [
+                    PackageCollectionGeneratorInput.Package(
+                        url: URL(string: "https://package-collection-tests.com/repos/TestRepoOne.git")!,
+                        summary: "Package Foo"
+                    ),
+                    PackageCollectionGeneratorInput.Package(
+                        url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                        summary: "Package Foo & Bar",
+                        excludedVersions: ["0.1.0"]
+                    ),
+                ]
+            )
+            let jsonEncoder = JSONEncoder.makeWithDefaults()
+            let inputData = try jsonEncoder.encode(input)
+            let inputFilePath = tmpDir.appending(component: "input.json")
+            try localFileSystem.writeFileContents(inputFilePath, bytes: ByteString(inputData))
+
+            // Where to write the generated collection
+            let outputFilePath = tmpDir.appending(component: "package-collection.json")
+            // `tmpDir` is where we extract the repos so use it as the working directory so we won't actually doing any cloning
+            let workingDirectoryPath = tmpDir
+
+            let cmd = try PackageCollectionGenerate.parse([
+                "--verbose",
+                inputFilePath.pathString,
+                outputFilePath.pathString,
+                "--working-directory-path",
+                workingDirectoryPath.pathString,
+            ])
+            try cmd.run()
+
+            let expectedPackages = [
+                Model.Collection.Package(
+                    url: URL(string: "https://package-collection-tests.com/repos/TestRepoOne.git")!,
+                    summary: "Package Foo",
+                    keywords: nil,
+                    versions: [
+                        Model.Collection.Package.Version(
+                            version: "0.1.0",
+                            summary: nil,
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageOne",
+                                    targets: [.init(name: "Foo", moduleName: "Foo")],
+                                    products: [.init(name: "Foo", type: .library(.automatic), targets: ["Foo"])],
+                                    minimumPlatformVersions: [.init(name: "macos", version: "10.15")]
+                                ),
+                            ],
+                            defaultToolsVersion: "5.2.0",
+                            verifiedCompatibility: nil,
+                            license: nil,
+                            createdAt: nil
+                        ),
+                    ],
+                    readmeURL: nil,
+                    license: nil
+                ),
+                Model.Collection.Package(
+                    url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                    summary: "Package Foo & Bar",
+                    keywords: nil,
+                    versions: [
+                        Model.Collection.Package.Version(
+                            version: "0.2.0",
+                            summary: nil,
+                            manifests: [
+                                "5.2.0": Model.Collection.Package.Version.Manifest(
+                                    toolsVersion: "5.2.0",
+                                    packageName: "TestPackageTwo",
+                                    targets: [
+                                        .init(name: "Bar", moduleName: "Bar"),
+                                        .init(name: "Foo", moduleName: "Foo"),
+                                    ],
+                                    products: [
+                                        .init(name: "Bar", type: .library(.automatic), targets: ["Bar"]),
+                                        .init(name: "Foo", type: .library(.automatic), targets: ["Foo"]),
+                                    ],
+                                    minimumPlatformVersions: nil
+                                ),
+                            ],
+                            defaultToolsVersion: "5.2.0",
+                            verifiedCompatibility: nil,
+                            license: nil,
+                            createdAt: nil
+                        ),
+                    ],
+                    readmeURL: nil,
+                    license: nil
+                ),
+            ]
+
+            let jsonDecoder = JSONDecoder.makeWithDefaults()
+
+            // Assert the generated package collection
+            let collectionData = try localFileSystem.readFileContents(outputFilePath).contents
+            let packageCollection = try jsonDecoder.decode(Model.Collection.self, from: Data(collectionData))
+            XCTAssertEqual(input.name, packageCollection.name)
+            XCTAssertEqual(input.overview, packageCollection.overview)
+            XCTAssertEqual(input.keywords, packageCollection.keywords)
+            XCTAssertEqual(expectedPackages, packageCollection.packages)
+        }
+    }
 }

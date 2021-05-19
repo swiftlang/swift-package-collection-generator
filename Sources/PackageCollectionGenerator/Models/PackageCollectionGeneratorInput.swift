@@ -78,6 +78,11 @@ extension PackageCollectionGeneratorInput {
         /// If not specified, the generator will select from most recent SemVers.
         public let versions: [String]?
 
+        /// Versions to be excluded from the collection.
+        /// If a version is listed in both `versions` and `excludedVersions`, it will be excluded from the collection.
+        /// In other words, `excludedVersions` has higher precedence than `versions`.
+        public let excludedVersions: [String]?
+
         /// Products to be excluded from the collection.
         public let excludedProducts: [String]?
 
@@ -92,6 +97,7 @@ extension PackageCollectionGeneratorInput {
             summary: String? = nil,
             keywords: [String]? = nil,
             versions: [String]? = nil,
+            excludedVersions: [String]? = nil,
             excludedProducts: [String]? = nil,
             excludedTargets: [String]? = nil,
             readmeURL: URL? = nil
@@ -100,6 +106,7 @@ extension PackageCollectionGeneratorInput {
             self.summary = summary
             self.keywords = keywords
             self.versions = versions
+            self.excludedVersions = excludedVersions
             self.excludedProducts = excludedProducts
             self.excludedTargets = excludedTargets
             self.readmeURL = readmeURL
@@ -115,6 +122,7 @@ extension PackageCollectionGeneratorInput.Package: CustomStringConvertible {
                 summary=\(self.summary ?? "nil"),
                 keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
                 versions=\(self.versions.map { "\($0)" } ?? "nil"),
+                excludedVersions=\(self.excludedVersions.map { "\($0)" } ?? "nil"),
                 excludedProducts=\(self.excludedProducts.map { "\($0)" } ?? "nil"),
                 excludedTargets=\(self.excludedTargets.map { "\($0)" } ?? "nil"),
                 readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil")

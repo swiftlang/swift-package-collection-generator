@@ -191,7 +191,15 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
 
         // Select versions if none specified
-        let versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
+        var versions = try package.versions ?? self.defaultVersions(for: gitDirectoryPath)
+
+        // Remove excluded versions
+        if let excludedVersions = package.excludedVersions {
+            print("Excluding: \(excludedVersions)", inColor: .yellow, verbose: self.verbose)
+            let excludedVersionsSet = Set(excludedVersions)
+            versions = versions.filter { !excludedVersionsSet.contains($0) }
+        }
+
         // Load the manifest for each version and extract metadata
         let packageVersions: [Model.Collection.Package.Version] = versions.compactMap { version in
             do {

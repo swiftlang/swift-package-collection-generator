@@ -8,6 +8,7 @@
       "summary": "Package Foobar",
       "keywords": ["test package"],
       "versions": ["0.2.0", "0.1.0"],
+      "excludedVersions": ["v0.1.0"],
       "excludedProducts": ["Foo"],
       "excludedTargets": ["Bar"],
       "readmeURL": "https://package-collection-tests.com/repos/foobar/README"
