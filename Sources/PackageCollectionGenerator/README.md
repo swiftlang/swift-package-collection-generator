@@ -54,6 +54,7 @@ Each item in the `packages` array is a package object with the following fields:
 * `summary`: A description of the package. **Optional.**
 * `keywords`: An array of keywords that the package is associated with. **Optional.**
 * `versions`: An array of package versions to include. **Optional.** If not specified, the generate will select the most recent versions.
+* `excludedVersions`: An array of package versions to exclude. **Optional.** If a version is listed in both `versions` and `excludedVersions`, it will be excluded from the package collection. 
 * `excludedProducts`: An array of product names to exclude. **Optional.**
 * `excludedTargets`: An array of target names to exclude. **Optional.**
 * `readmeURL`: The URL of the package's README. **Optional.**

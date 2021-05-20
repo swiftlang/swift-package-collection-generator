@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -30,6 +30,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["0.2.0", "0.1.0"],
+                    excludedVersions: ["v0.1.0"],
                     excludedProducts: ["Foo"],
                     excludedTargets: ["Bar"],
                     readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
@@ -61,6 +62,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["1.3.2"],
+                    excludedVersions: ["0.8.1"],
                     excludedProducts: ["Foo"],
                     excludedTargets: ["Bar"],
                     readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
