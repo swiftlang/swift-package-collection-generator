@@ -185,7 +185,12 @@ public struct PackageCollectionGenerate: ParsableCommand {
                                   gitDirectoryPath: AbsolutePath,
                                   metadataProvider: PackageMetadataProvider,
                                   jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
-        let additionalMetadata = try? tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
+        var additionalMetadata: PackageBasicMetadata?
+        do {
+            additionalMetadata = try tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
+        } catch {
+            printError("Failed to fetch additional metadata: \(error)")
+        }
         if let additionalMetadata = additionalMetadata {
             print("Retrieved additional metadata: \(additionalMetadata)", verbose: self.verbose)
         }
