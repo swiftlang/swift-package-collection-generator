@@ -139,7 +139,7 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
 
     private static func makeDefaultHTTPClient() -> HTTPClient {
         var client = HTTPClient()
-        client.configuration.requestTimeout = .seconds(1)
+        client.configuration.requestTimeout = .seconds(2)
         client.configuration.retryStrategy = .exponentialBackoff(maxAttempts: 3, baseDelay: .milliseconds(50))
         client.configuration.circuitBreakerStrategy = .hostErrors(maxErrors: 50, age: .seconds(30))
         return client
