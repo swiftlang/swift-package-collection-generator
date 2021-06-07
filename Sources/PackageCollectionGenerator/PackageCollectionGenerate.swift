@@ -93,12 +93,24 @@ public struct PackageCollectionGenerate: ParsableCommand {
             do {
                 let packageMetadata = try self.generateMetadata(for: package, metadataProvider: githubPackageMetadataProvider, jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
+
+                guard !packageMetadata.versions.isEmpty else {
+                    printError("Skipping package \(package.url) because it does not have any valid versions.")
+                    return nil
+                }
+
                 return packageMetadata
             } catch {
                 printError("Failed to generate metadata for package \(package.url): \(error)")
                 return nil
             }
         }
+
+        guard !packages.isEmpty else {
+            printError("Failed to create package collection because it does not have any valid packages.")
+            return
+        }
+
         // Construct the package collection
         let packageCollection = Model.Collection(
             name: input.name,
@@ -208,13 +220,24 @@ public struct PackageCollectionGenerate: ParsableCommand {
         // Load the manifest for each version and extract metadata
         let packageVersions: [Model.Collection.Package.Version] = versions.compactMap { version in
             do {
-                return try self.generateMetadata(
+                let metadata = try self.generateMetadata(
                     for: version,
                     excludedProducts: package.excludedProducts.map { Set($0) } ?? [],
                     excludedTargets: package.excludedTargets.map { Set($0) } ?? [],
                     gitDirectoryPath: gitDirectoryPath,
                     jsonDecoder: jsonDecoder
                 )
+
+                guard metadata.manifests.values.first(where: { !$0.products.isEmpty }) != nil else {
+                    printError("Skipping version \(version) because it does not have any products.")
+                    return nil
+                }
+                guard metadata.manifests.values.first(where: { !$0.targets.isEmpty }) != nil else {
+                    printError("Skipping version \(version) because it does not have any targets.")
+                    return nil
+                }
+
+                return metadata
             } catch {
                 printError("Failed to load package manifest for \(package.url) version \(version): \(error)")
                 return nil
@@ -286,7 +309,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                 )
             }
 
-        // Include only packages that are in at least one product
+        // Include only targets that are in at least one product
         let publicTargets = Set(products.map { $0.targets }.reduce(into: []) { result, targets in
             result.append(contentsOf: targets.filter { !excludedTargets.contains($0) })
         })
