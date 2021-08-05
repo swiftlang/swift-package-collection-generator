@@ -55,6 +55,9 @@ public struct PackageCollectionGenerate: ParsableCommand {
         """)
     private var authToken: [String] = []
 
+    @Flag(name: .long, help: "Format output using friendly indentation and line-breaks.")
+    private var prettyPrinted: Bool = false
+
     @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     private var verbose: Bool = false
 
@@ -134,7 +137,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
         // Write the package collection
-        let jsonEncoder = JSONEncoder.makeWithDefaults(sortKeys: true, prettyPrint: false, escapeSlashes: false)
+        let jsonEncoder = JSONEncoder.makeWithDefaults(sortKeys: true, prettyPrint: prettyPrinted, escapeSlashes: false)
         let jsonData = try jsonEncoder.encode(packageCollection)
         try jsonData.write(to: URL(fileURLWithPath: outputAbsolutePath.pathString))
         print("Package collection saved to \(outputAbsolutePath)", inColor: .cyan, verbose: self.verbose)

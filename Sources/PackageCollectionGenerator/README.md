@@ -8,7 +8,7 @@ by SwiftPM.
 > swift run package-collection-generate --help
 OVERVIEW: Generate a package collection from the given list of packages.
 
-USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--verbose]
+USAGE: package-collection-generate <input-path> <output-path> [--working-directory-path <working-directory-path>] [--revision <revision>] [--auth-token <auth-token> ...] [--pretty-printed] [--verbose]
 
 ARGUMENTS:
   <input-path>            The path to the JSON document containing the list of packages to be processed 
@@ -27,6 +27,7 @@ OPTIONS:
   --auth-token <auth-token>
                           Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
                           hosting platform APIs. Currently only GitHub APIs are supported. An example token would be github:github.com:<TOKEN>.   
+  --pretty-printed        Format output using friendly indentation and line-breaks.
   -v, --verbose           Show extra logging for debugging purposes.
   -h, --help              Show help information.
 ```
