@@ -16,7 +16,7 @@ ARGUMENTS:
                           certificate last.
 
 OPTIONS:
-  --verbose               Show extra logging for debugging purposes
+  -v, --verbose           Show extra logging for debugging purposes.
   -h, --help              Show help information.
 ```
 

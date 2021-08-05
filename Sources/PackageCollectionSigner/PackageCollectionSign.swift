@@ -43,7 +43,7 @@ public struct PackageCollectionSign: ParsableCommand {
     @Argument(help: "Paths to all certificates (DER encoded) in the chain. The certificate used for signing must be first and the root certificate last.")
     var certChainPaths: [String]
 
-    @Flag(name: .long, help: "Show extra logging for debugging purposes")
+    @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     var verbose: Bool = false
 
     typealias Model = PackageCollectionModel.V1

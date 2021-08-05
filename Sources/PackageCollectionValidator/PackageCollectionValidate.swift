@@ -34,7 +34,7 @@ public struct PackageCollectionValidate: ParsableCommand {
     @Flag(name: .long, help: "Warnings will fail validation in addition to errors")
     private var warningsAsErrors: Bool = false
 
-    @Flag(name: .long, help: "Show extra logging for debugging purposes")
+    @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     private var verbose: Bool = false
 
     typealias Model = PackageCollectionModel.V1

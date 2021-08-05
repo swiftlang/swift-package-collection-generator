@@ -13,6 +13,6 @@ ARGUMENTS:
 
 OPTIONS:
   --warnings-as-errors    Warnings will fail validation in addition to errors
-  --verbose               Show extra logging for debugging purposes
+  -v, --verbose           Show extra logging for debugging purposes.
   -h, --help              Show help information.
 ```
