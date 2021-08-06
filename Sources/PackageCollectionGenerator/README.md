@@ -27,7 +27,7 @@ OPTIONS:
   --auth-token <auth-token>
                           Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
                           hosting platform APIs. Currently only GitHub APIs are supported. An example token would be github:github.com:<TOKEN>.   
-  --verbose               Show extra logging for debugging purposes 
+  -v, --verbose           Show extra logging for debugging purposes.
   -h, --help              Show help information.
 ```
 

@@ -32,7 +32,7 @@ public struct PackageCollectionDiff: ParsableCommand {
     @Argument(help: "The path to the JSON document containing package collection #2")
     private var collectionTwoPath: String
 
-    @Flag(name: .long, help: "Show extra logging for debugging purposes")
+    @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     private var verbose: Bool = false
 
     typealias Model = PackageCollectionModel.V1

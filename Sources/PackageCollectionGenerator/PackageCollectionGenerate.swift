@@ -55,7 +55,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         """)
     private var authToken: [String] = []
 
-    @Flag(name: .long, help: "Show extra logging for debugging purposes")
+    @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     private var verbose: Bool = false
 
     typealias Model = PackageCollectionModel.V1

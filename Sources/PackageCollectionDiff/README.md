@@ -13,6 +13,6 @@ ARGUMENTS:
   <collection-two-path>   The path to the JSON document containing package collection #2 
 
 OPTIONS:
-  --verbose               Show extra logging for debugging purposes 
+  -v, --verbose           Show extra logging for debugging purposes.
   -h, --help              Show help information.
 ```
