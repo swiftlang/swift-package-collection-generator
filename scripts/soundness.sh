@@ -39,6 +39,10 @@ fi
 printf "\033[0;32mokay.\033[0m\n"
 
 printf "=> Checking format... "
+if [ -z `which swiftformat` ]; then
+  printf "\033[0;31mcould not find swiftformat. See https://github.com/nicklockwood/SwiftFormat for installation instructions.\033[0m\n"
+  exit 1
+fi
 FIRST_OUT="$(git status --porcelain)"
 swiftformat . > /dev/null 2>&1
 SECOND_OUT="$(git status --porcelain)"
