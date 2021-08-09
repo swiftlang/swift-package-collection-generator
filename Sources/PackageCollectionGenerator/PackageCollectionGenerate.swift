@@ -55,6 +55,9 @@ public struct PackageCollectionGenerate: ParsableCommand {
         """)
     private var authToken: [String] = []
 
+    @Flag(name: .long, help: "Format output using friendly indentation and line-breaks.")
+    private var prettyPrinted: Bool = false
+
     @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     private var verbose: Bool = false
 
@@ -134,7 +137,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
 
         // Write the package collection
-        let jsonEncoder = JSONEncoder.makeWithDefaults(sortKeys: true, prettyPrint: false, escapeSlashes: false)
+        let jsonEncoder = JSONEncoder.makeWithDefaults(sortKeys: true, prettyPrint: self.prettyPrinted, escapeSlashes: false)
         let jsonData = try jsonEncoder.encode(packageCollection)
         try jsonData.write(to: URL(fileURLWithPath: outputAbsolutePath.pathString))
         print("Package collection saved to \(outputAbsolutePath)", inColor: .cyan, verbose: self.verbose)
@@ -142,7 +145,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package
+    {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -196,7 +200,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   gitDirectoryPath: AbsolutePath,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package
+    {
         var additionalMetadata: PackageBasicMetadata?
         do {
             additionalMetadata = try tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
@@ -257,7 +262,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
                                   excludedProducts: Set<String>,
                                   excludedTargets: Set<String>,
                                   gitDirectoryPath: AbsolutePath,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version
+    {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
@@ -287,7 +293,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func defaultManifest(excludedProducts: Set<String>,
                                  excludedTargets: Set<String>,
                                  gitDirectoryPath: AbsolutePath,
-                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest {
+                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest
+    {
         // Run `swift package dump-package` to generate JSON manifest from `Package.swift`
         let manifestJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package dump-package")
         let manifest = try jsonDecoder.decode(PackageManifest.self, from: manifestJSON.data(using: .utf8) ?? Data())
