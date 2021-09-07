@@ -6,6 +6,10 @@ case. SwiftPM will allow users to subscribe to package collections and make thei
 
 This repository provides a set of Swift packages and tooling for the generation and consumption of package collections.
 
+#### Branches
+
+The `main` branch depends on SwiftPM's `main` branch and may be unstable. It is recommended to use versioned branches such as `5.5`, which depend on the corresponding SwiftPM's `release/<version>` branch, instead.
+
 ## Package Collection Format
 
 Package collections can be created and published by anyone. To make sure SwiftPM can consume 
