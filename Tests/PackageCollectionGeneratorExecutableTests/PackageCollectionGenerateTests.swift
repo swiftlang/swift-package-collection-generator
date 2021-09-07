@@ -175,6 +175,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 ),
             ]
 
+            #if os(macOS) // XCTAttachment is available in Xcode only
             // Run command with both pretty-printed enabled and disabled (which is the default, with no flag).
             for prettyFlag in ["--pretty-printed", nil] {
                 // Where to write the generated collection
@@ -205,6 +206,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
 
                 add(XCTAttachment(contentsOfFile: outputFilePath.asURL))
             }
+            #endif
         }
     }
 
