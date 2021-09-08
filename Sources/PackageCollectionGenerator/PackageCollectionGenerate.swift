@@ -352,7 +352,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         //  - Maximum of 6 versions total
         var allVersions: [(tag: String, version: Version)] = tags.compactMap { tag in
             // Remove common "v" prefix which is supported by SwiftPM
-            Version(string: tag.hasPrefix("v") ? String(tag.dropFirst(1)) : tag).map { (tag: tag, version: $0) }
+            Version(tag.hasPrefix("v") ? String(tag.dropFirst(1)) : tag).map { (tag: tag, version: $0) }
         }
         allVersions.sort { $0.version > $1.version }
 
@@ -389,6 +389,8 @@ extension PackageCollectionModel.V1.ProductType {
             self = .executable
         case .plugin:
             self = .plugin
+        case .snippet:
+            self = .snippet
         case .test:
             self = .test
         }
