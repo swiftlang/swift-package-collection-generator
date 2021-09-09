@@ -62,9 +62,9 @@ extension PackageCollectionGeneratorInput: CustomStringConvertible {
     }
 }
 
-extension PackageCollectionGeneratorInput {
+public extension PackageCollectionGeneratorInput {
     /// Represents a package to be processed
-    public struct Package: Equatable, Codable {
+    struct Package: Equatable, Codable {
         /// The URL of the package. Currently only Git repository URLs are supported.
         public let url: URL
 
