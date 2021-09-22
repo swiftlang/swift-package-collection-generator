@@ -64,7 +64,8 @@ private struct MockPackageCollectionSigner: PackageCollectionSigner {
               certChainPaths: [URL],
               certPrivateKeyPath: URL,
               certPolicyKey: CertificatePolicyKey,
-              callback: @escaping (Result<Model.SignedCollection, Error>) -> Void) {
+              callback: @escaping (Result<Model.SignedCollection, Error>) -> Void)
+    {
         let signature = Model.Signature(
             signature: "test signature",
             certificate: Model.Signature.Certificate(

@@ -155,8 +155,8 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
     }
 }
 
-extension GitHubPackageMetadataProvider {
-    fileprivate struct GetRepositoryResponse: Codable {
+private extension GitHubPackageMetadataProvider {
+    struct GetRepositoryResponse: Codable {
         let name: String
         let fullName: String
         let description: String?
@@ -171,8 +171,8 @@ extension GitHubPackageMetadataProvider {
     }
 }
 
-extension GitHubPackageMetadataProvider {
-    fileprivate struct Readme: Codable {
+private extension GitHubPackageMetadataProvider {
+    struct Readme: Codable {
         let url: Foundation.URL
         let htmlURL: Foundation.URL
         let downloadURL: Foundation.URL
@@ -184,7 +184,7 @@ extension GitHubPackageMetadataProvider {
         }
     }
 
-    fileprivate struct License: Codable {
+    struct License: Codable {
         let url: Foundation.URL
         let htmlURL: Foundation.URL
         let downloadURL: Foundation.URL

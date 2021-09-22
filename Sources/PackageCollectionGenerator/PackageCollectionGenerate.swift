@@ -145,8 +145,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package
-    {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -200,8 +199,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   gitDirectoryPath: AbsolutePath,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package
-    {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         var additionalMetadata: PackageBasicMetadata?
         do {
             additionalMetadata = try tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
@@ -295,18 +293,11 @@ public struct PackageCollectionGenerate: ParsableCommand {
                                  gitDirectoryPath: AbsolutePath,
                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest
     {
-        // Run `swift package dump-package` to generate JSON manifest from `Package.swift`
-        let manifestJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package dump-package")
-        let manifest = try jsonDecoder.decode(PackageManifest.self, from: manifestJSON.data(using: .utf8) ?? Data())
-
         // Run `swift package describe --type json` to generate JSON package description
         let packageDescriptionJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package describe --type json")
         let packageDescription = try jsonDecoder.decode(PackageDescription.self, from: packageDescriptionJSON.data(using: .utf8) ?? Data())
-        let targetModuleNames = packageDescription.targets.reduce(into: [String: String]()) { result, target in
-            result[target.name] = target.c99name
-        }
 
-        let products: [Model.Product] = manifest.products
+        let products: [Model.Product] = packageDescription.products
             .filter { !excludedProducts.contains($0.name) }
             .map { product in
                 Model.Product(
@@ -315,26 +306,33 @@ public struct PackageCollectionGenerate: ParsableCommand {
                     targets: product.targets
                 )
             }
+            .sorted { $0.name < $1.name }
 
-        // Include only targets that are in at least one product
-        let publicTargets = Set(products.map { $0.targets }.reduce(into: []) { result, targets in
+        // Include only targets that are in at least one product.
+        // Another approach is to use `target.product_memberships` but the way it is implemented produces a more concise list.
+        let publicTargets = Set(products.map(\.targets).reduce(into: []) { result, targets in
             result.append(contentsOf: targets.filter { !excludedTargets.contains($0) })
         })
 
+        let targets: [Model.Target] = packageDescription.targets
+            .filter { publicTargets.contains($0.name) }
+            .map { target in
+                Model.Target(
+                    name: target.name,
+                    moduleName: target.c99name
+                )
+            }
+            .sorted { $0.name < $1.name }
+
         var minimumPlatformVersions: [Model.PlatformVersion]?
-        if let platforms = manifest.platforms, !platforms.isEmpty {
-            minimumPlatformVersions = platforms.map { Model.PlatformVersion(name: $0.platformName, version: $0.version) }
+        if let platforms = packageDescription.platforms, !platforms.isEmpty {
+            minimumPlatformVersions = platforms.map { Model.PlatformVersion(name: $0.name, version: $0.version) }
         }
 
         return Model.Collection.Package.Version.Manifest(
-            toolsVersion: manifest.toolsVersion._version,
-            packageName: manifest.name,
-            targets: manifest.targets.filter { publicTargets.contains($0.name) }.map { target in
-                Model.Target(
-                    name: target.name,
-                    moduleName: targetModuleNames[target.name]
-                )
-            },
+            toolsVersion: packageDescription.tools_version,
+            packageName: packageDescription.name,
+            targets: targets,
             products: products,
             minimumPlatformVersions: minimumPlatformVersions
         )
