@@ -80,7 +80,7 @@ public struct PackageCollectionSign: ParsableCommand {
             try localFileSystem.copy(from: rootCertPath, to: tmpDir.appending(component: rootCertFilename))
 
             // Sign the collection
-            let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL, callbackQueue: DispatchQueue.global(), diagnosticsEngine: DiagnosticsEngine())
+            let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL, callbackQueue: DispatchQueue.global())
             let signedCollection = try tsc_await { callback in
                 signer.sign(collection: collection, certChainPaths: certChainURLs, certPrivateKeyPath: privateKeyURL, certPolicyKey: .default, callback: callback)
             }
