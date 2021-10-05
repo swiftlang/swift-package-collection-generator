@@ -81,7 +81,7 @@ public struct PackageCollectionSign: ParsableCommand {
 
             // Sign the collection
             let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL,
-                                                            observabilityScope: ObservabilitySystem { _, _ in }.topScope,
+                                                            observabilityScope: ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope,
                                                             callbackQueue: DispatchQueue.global())
             let signedCollection = try tsc_await { callback in
                 signer.sign(collection: collection, certChainPaths: certChainURLs, certPrivateKeyPath: privateKeyURL, certPolicyKey: .default, callback: callback)
