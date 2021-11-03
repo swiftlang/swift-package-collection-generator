@@ -62,7 +62,7 @@ final class PackageCollectionSignTests: XCTestCase {
 private struct MockPackageCollectionSigner: PackageCollectionSigner {
     func sign(collection: Model.Collection,
               certChainPaths: [URL],
-              certPrivateKeyPath: URL,
+              privateKeyPEM: Data,
               certPolicyKey: CertificatePolicyKey,
               callback: @escaping (Result<Model.SignedCollection, Error>) -> Void)
     {
