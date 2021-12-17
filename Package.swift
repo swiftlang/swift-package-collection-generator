@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "swift-package-collection-generator",
     // Required for JSONEncoder/Decoder formatting and ISO-8601 support
-    platforms: [.macOS(.v10_15)],
+    platforms: [.macOS("10.15.4")],
     products: [
         .library(name: "PackageCollectionGenerator", targets: ["PackageCollectionGenerator"]),
         .executable(name: "package-collection-generate", targets: ["PackageCollectionGeneratorExecutable"]),
@@ -17,7 +17,7 @@ let package = Package(
         .executable(name: "package-collection-diff", targets: ["PackageCollectionDiffExecutable"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "0.3.0")),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "1.0.2")),
         // FIXME: need semver
         .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("main")),
         .package(url: "https://github.com/swift-server/swift-backtrace.git", .upToNextMajor(from: "1.1.0")),
