@@ -51,7 +51,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     @Option(parsing: .upToNextOption, help:
         """
         Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
-        hosting platform APIs. Currently only GitHub APIs are supported. An example token would be github:github.com:<TOKEN>.
+        hosting platform APIs. Currently only GitHub and GitLab APIs are supported. An example token would be github:github.com:<TOKEN>.
         """)
     private var authToken: [String] = []
 
@@ -89,12 +89,37 @@ public struct PackageCollectionGenerate: ParsableCommand {
         let input = try jsonDecoder.decode(PackageCollectionGeneratorInput.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
         print("\(input)", verbose: self.verbose)
 
-        let githubPackageMetadataProvider = GitHubPackageMetadataProvider(authTokens: authTokens)
+        // Build the host-to-metadata-provider-mapping
+        var hostToProviderMapping: [String: PackageMetadataProvider] = [
+            "github.com": GitHubPackageMetadataProvider(authTokens: authTokens),
+            "gitlab.com": GitLabPackageMetadataProvider(authTokens: authTokens)
+        ]
+        if let mappingFromInput = input.metadataProviderMapping {
+            for (host, provider) in mappingFromInput {
+                switch provider {
+                case "github":
+                    hostToProviderMapping[host] = GitHubPackageMetadataProvider(authTokens: authTokens)
+                case "gitlab":
+                    hostToProviderMapping[host] = GitLabPackageMetadataProvider(authTokens: authTokens)
+                default:
+                    printError("Provider \(provider) for host \(host) is not implemented")
+                    return
+                }
+            }
+        }
 
         // Generate metadata for each package
         let packages: [Model.Collection.Package] = input.packages.compactMap { package in
             do {
-                let packageMetadata = try self.generateMetadata(for: package, metadataProvider: githubPackageMetadataProvider, jsonDecoder: jsonDecoder)
+                guard let host = package.url.host,
+                      let metadataProvider = hostToProviderMapping[host] else {
+                          printError("Missing provider for host \(package.url.host ?? "invalid host"). Please specify it in the input-json in metadataProviderMapping.")
+                          return nil
+                }
+
+                let packageMetadata = try self.generateMetadata(for: package,
+                                                                   metadataProvider: metadataProvider,
+                                                                   jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
 
                 guard !packageMetadata.versions.isEmpty else {
