@@ -1,8 +1,8 @@
 # Swift Package Collection Generator
 
-A **package collection** ([SE-0291](https://github.com/apple/swift-evolution/blob/main/proposals/0291-package-collections.md)) 
-is a curated list of packages and associated metadata which makes it easier to discover an existing package for a particular use 
-case. SwiftPM will allow users to subscribe to package collections and make their contents accessible to any clients of libSwiftPM.  
+A **package collection** ([SE-0291](https://github.com/apple/swift-evolution/blob/main/proposals/0291-package-collections.md))
+is a curated list of packages and associated metadata which makes it easier to discover an existing package for a particular use
+case. SwiftPM will allow users to subscribe to package collections and make their contents accessible to any clients of libSwiftPM.
 
 This repository provides a set of Swift packages and tooling for the generation and consumption of package collections.
 
@@ -12,10 +12,34 @@ Swift toolchain version 5.4 or greater is required.
 
 The `main` branch depends on SwiftPM's `main` branch and may be unstable. It is recommended to use versioned branches such as `5.5`, which depend on the corresponding SwiftPM's `release/<version>` branch, instead.
 
+
+## Installation
+
+Currently, the package collection generator is a standalone tool that's not integrated with the Swift toolchain. To use it from the command line, first build the project from source by cloning the repository and running the following from the root directory:
+
+```zsh
+swift build --configuration release
+```
+
+Then, either run the final executables directly (e.g., `.build/release/package-collection-generate`) or install them on your system path:
+
+```zsh
+install .build/release/package-collection-generate /usr/local/bin/package-collection-generate
+install .build/release/package-collection-diff /usr/local/bin/package-collection-diff
+install .build/release/package-collection-sign /usr/local/bin/package-collection-sign
+install .build/release/package-collection-validate /usr/local/bin/package-collection-validate
+```
+
+Finally, another way to run the tool is via `swift run`, which builds and runs the specified executable. For example:
+
+```zsh
+swift run package-collection-generate
+```
+
 ## Package Collection Format
 
-Package collections can be created and published by anyone. To make sure SwiftPM can consume 
-them, all package collections must adhere to the same format. See the [v1 format](PackageCollectionFormats/v1.md) 
+Package collections can be created and published by anyone. To make sure SwiftPM can consume
+them, all package collections must adhere to the same format. See the [v1 format](PackageCollectionFormats/v1.md)
 for details.
 
 ## Generating a Package Collection
@@ -32,4 +56,4 @@ command-line tool that validates package collections against the defined format.
 ## Comparing Package Collections
 
 [`package-collection-diff`](Sources/PackageCollectionDiff/README.md) is a Swift
-command-line tool that compares two package collections to determine if they are different from each other. 
+command-line tool that compares two package collections to determine if they are different from each other.
