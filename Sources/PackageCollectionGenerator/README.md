@@ -82,11 +82,11 @@ Each item in the `packages` array is a package object with the following fields:
       "url": "https://www.example.com/repos/RepoTwo.git"
     }
   ],
-  "metadataProviders": {
-    "www.example.com": "gitlab"
-  }
   "author": {
     "name": "Jane Doe"
+  },
+  "metadataProviders": {
+    "www.example.com": "gitlab"
   }
 }
 ```

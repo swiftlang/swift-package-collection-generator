@@ -22,5 +22,8 @@
   },
   "author": {
     "name": "Jane Doe"
+  },
+  "metadataProviders": {
+      "package-collection-tests.com": "github"
   }
 }

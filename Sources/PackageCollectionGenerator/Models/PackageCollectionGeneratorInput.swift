@@ -30,26 +30,26 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
     /// A list of packages to process.
     public let packages: [Package]
 
-    /// A mapping of the hosts to the corresponding metadata-provider (GitHub, GitLab, ...).
-    public let metadataProviders: [String: String]?
-
     /// The author of this package collection.
     public let author: PackageCollectionModel.V1.Collection.Author?
+
+    /// A mapping of the hosts to the corresponding metadata-provider (GitHub, GitLab, ...).
+    public let metadataProviders: [String: String]?
 
     public init(
         name: String,
         overview: String? = nil,
         keywords: [String]? = nil,
         packages: [Package],
-        metadataProviders: [String: String]?,
-        author: PackageCollectionModel.V1.Collection.Author? = nil
+        author: PackageCollectionModel.V1.Collection.Author? = nil,
+        metadataProviders: [String: String]? = nil
     ) {
         self.name = name
         self.overview = overview
         self.keywords = keywords
         self.packages = packages
-        self.metadataProviders = metadataProviders
         self.author = author
+        self.metadataProviders = metadataProviders
     }
 }
 
@@ -61,8 +61,8 @@ extension PackageCollectionGeneratorInput: CustomStringConvertible {
             overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             packages=\(self.packages),
-            metadataProviders=\(self.metadataProviders.map { "\($0)" } ?? "nil"),
-            author=\(self.author.map { "\($0)" } ?? "nil")
+            author=\(self.author.map { "\($0)" } ?? "nil"),
+            metadataProviders=\(self.metadataProviders.map { "\($0)" } ?? "nil")
         }
         """
     }
