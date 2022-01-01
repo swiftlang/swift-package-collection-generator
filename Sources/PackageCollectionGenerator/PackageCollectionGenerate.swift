@@ -51,7 +51,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     @Option(parsing: .upToNextOption, help:
         """
         Auth tokens each in the format of type:host:token for retrieving additional package metadata via source
-        hosting platform APIs. Currently only GitHub and GitLab APIs are supported. An example token would be github:github.com:<TOKEN>.
+        hosting platform APIs. Currently GitHub and GitLab APIs are supported. An example token would be github:github.com:<TOKEN>.
         """)
     private var authToken: [String] = []
 
