@@ -94,7 +94,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             "github.com": GitHubPackageMetadataProvider(authTokens: authTokens),
             "gitlab.com": GitLabPackageMetadataProvider(authTokens: authTokens)
         ]
-        if let mappingFromInput = input.metadataProviderMapping {
+        if let mappingFromInput = input.metadataProviders {
             for (host, provider) in mappingFromInput {
                 switch provider {
                 case "github":
@@ -113,7 +113,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             do {
                 guard let host = package.url.host,
                       let metadataProvider = hostToProviderMapping[host] else {
-                          printError("Missing provider for host \(package.url.host ?? "invalid host"). Please specify it in the input-json in metadataProviderMapping.")
+                          printError("Missing provider for host \(package.url.host ?? "invalid host"). Please specify it in the input-json in metadataProviders.")
                           return nil
                 }
 

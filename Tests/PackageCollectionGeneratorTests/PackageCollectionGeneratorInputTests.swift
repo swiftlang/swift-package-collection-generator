@@ -39,7 +39,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     url: URL(string: "https://package-collection-tests.com/repos/foobaz.git")!
                 ),
             ],
-            metadataProviderMapping: ["package-collection-tests.com": "github"],
+            metadataProviders: ["package-collection-tests.com": "github"],
             author: .init(name: "Jane Doe")
         )
 
@@ -69,7 +69,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
                 ),
             ],
-            metadataProviderMapping: ["package-collection-tests.com": "github"],
+            metadataProviders: ["package-collection-tests.com": "github"],
             author: .init(name: "Jane Doe")
         )
 

@@ -17,7 +17,7 @@
       "url": "https://package-collection-tests.com/repos/foobaz.git"
     }
   ],
-  "metadataProviderMapping": {
+  "metadataProviders": {
       "package-collection-tests.com": "github"
   },
   "author": {

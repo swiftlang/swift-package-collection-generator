@@ -31,7 +31,7 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
     public let packages: [Package]
 
     /// A mapping of the hosts to the corresponding metadata-provider (GitHub, GitLab, ...).
-    public let metadataProviderMapping: [String: String]?
+    public let metadataProviders: [String: String]?
 
     /// The author of this package collection.
     public let author: PackageCollectionModel.V1.Collection.Author?
@@ -41,14 +41,14 @@ public struct PackageCollectionGeneratorInput: Equatable, Codable {
         overview: String? = nil,
         keywords: [String]? = nil,
         packages: [Package],
-        metadataProviderMapping: [String: String]?,
+        metadataProviders: [String: String]?,
         author: PackageCollectionModel.V1.Collection.Author? = nil
     ) {
         self.name = name
         self.overview = overview
         self.keywords = keywords
         self.packages = packages
-        self.metadataProviderMapping = metadataProviderMapping
+        self.metadataProviders = metadataProviders
         self.author = author
     }
 }
@@ -61,7 +61,7 @@ extension PackageCollectionGeneratorInput: CustomStringConvertible {
             overview=\(self.overview ?? "nil"),
             keywords=\(self.keywords.map { "\($0)" } ?? "nil"),
             packages=\(self.packages),
-            metadataProviderMapping=\(self.metadataProviderMapping.map { "\($0)" } ?? "nil"),
+            metadataProviders=\(self.metadataProviders.map { "\($0)" } ?? "nil"),
             author=\(self.author.map { "\($0)" } ?? "nil")
         }
         """
