@@ -137,8 +137,8 @@ extension GitLabPackageMetadataProvider {
         let fullName: String
         let description: String?
         let topics: [String]?
-        let license_url: String?
-        let readme_url: String?
+        let licenseURL: String?
+        let readmeURL: String?
         let license: License?
 
         private enum CodingKeys: String, CodingKey {
