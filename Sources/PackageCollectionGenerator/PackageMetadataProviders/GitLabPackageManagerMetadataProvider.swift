@@ -62,7 +62,7 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
             case (404, _, _):
                 result = .failure(Errors.notFound(baseURL))
             case (200, _, _):
-                guard let metadata = try? response.decodeBody(GetRepositoryResponse.self, using: self.decoder) else {
+                guard let metadata = try? response.decodeBody(GetProjectResponse.self, using: self.decoder) else {
                     callback(.failure(Errors.invalidResponse(baseURL, "Invalid body")))
                     return
                 }
@@ -136,7 +136,7 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
 }
 
 extension GitLabPackageMetadataProvider {
-    fileprivate struct GetRepositoryResponse: Codable {
+    fileprivate struct GetProjectResponse: Codable {
         let name: String
         let fullName: String
         let description: String?
