@@ -37,38 +37,33 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
     }
 
     func get(_ packageURL: URL, callback: @escaping (Result<PackageBasicMetadata, Error>) -> Void) {
-        guard let baseURL = self.apiURL(packageURL.absoluteString),
-              let urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
-                  return callback(.failure(Errors.invalidGitURL(packageURL)))
-              }
-
-        let projectPath = urlComponents.path.dropFirst().replacingOccurrences(of: "/", with: "%2F")
-        let apiPrefix = GitLabPackageMetadataProvider.apiHostURLPathPostfix
-        let metadataURL = URL(string: "\(urlComponents.scheme!)://\(urlComponents.host!)/\(apiPrefix)/projects/\(projectPath)")!
+        guard let baseURL: URL = self.apiURL(packageURL) else {
+            return callback(.failure(Errors.invalidGitURL(packageURL)))
+        }
 
         // get the main data
         let metadataHeaders = HTTPClientHeaders()
         let metadataOptions = self.makeRequestOptions(validResponseCodes: [200, 401, 403, 404])
-        let hasAuthorization = metadataOptions.authorizationProvider?(metadataURL) != nil
-        var result: Result<HTTPClient.Response, Error> = tsc_await { callback in self.httpClient.get(metadataURL, headers: metadataHeaders, options: metadataOptions, completion: callback) }
+        let hasAuthorization = metadataOptions.authorizationProvider?(baseURL) != nil
+        var result: Result<HTTPClient.Response, Error> = tsc_await { callback in self.httpClient.get(baseURL, headers: metadataHeaders, options: metadataOptions, completion: callback) }
 
         if case .success(let response) = result {
             let apiLimit = response.headers.get("RateLimit-Limit").first.flatMap(Int.init) ?? -1
             let apiRemaining = response.headers.get("RateLimit-Remaining").first.flatMap(Int.init) ?? -1
             switch (response.statusCode, hasAuthorization, apiRemaining) {
             case (_, _, 0):
-                result = .failure(Errors.apiLimitsExceeded(metadataURL, apiLimit, apiRemaining))
+                result = .failure(Errors.apiLimitsExceeded(baseURL, apiLimit, apiRemaining))
             case (401, true, _):
-                result = .failure(Errors.invalidAuthToken(metadataURL))
+                result = .failure(Errors.invalidAuthToken(baseURL))
             case (401, false, _):
-                result = .failure(Errors.permissionDenied(metadataURL))
+                result = .failure(Errors.permissionDenied(baseURL))
             case (403, _, _):
-                result = .failure(Errors.permissionDenied(metadataURL))
+                result = .failure(Errors.permissionDenied(baseURL))
             case (404, _, _):
-                result = .failure(Errors.notFound(metadataURL))
+                result = .failure(Errors.notFound(baseURL))
             case (200, _, _):
                 guard let metadata = try? response.decodeBody(GetRepositoryResponse.self, using: self.decoder) else {
-                    callback(.failure(Errors.invalidResponse(metadataURL, "Invalid body")))
+                    callback(.failure(Errors.invalidResponse(baseURL, "Invalid body")))
                     return
                 }
 
@@ -92,13 +87,22 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
 
                 callback(.success(model))
             default:
-                callback(.failure(Errors.invalidResponse(metadataURL, "Invalid status code: \(response.statusCode)")))
+                callback(.failure(Errors.invalidResponse(baseURL, "Invalid status code: \(response.statusCode)")))
             }
         }
     }
 
-    internal func apiURL(_ url: String) -> Foundation.URL? {
-        return URL(string: url.spm_dropGitSuffix())
+    internal func apiURL(_ url: URL) -> Foundation.URL? {
+        guard let baseURL = URL(string: url.absoluteString.spm_dropGitSuffix()),
+              let urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false),
+              let scheme = urlComponents.scheme,
+              let host = urlComponents.host else {
+            return nil
+        }
+        let projectPath = urlComponents.path.dropFirst().replacingOccurrences(of: "/", with: "%2F")
+        let apiPrefix = GitLabPackageMetadataProvider.apiHostURLPathPostfix
+        let metadataURL = URL(string: "\(scheme)://\(host)/\(apiPrefix)/projects/\(projectPath)")!
+        return metadataURL
     }
 
     private func makeRequestOptions(validResponseCodes: [Int]) -> HTTPClientRequest.Options {
