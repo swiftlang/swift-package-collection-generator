@@ -69,11 +69,9 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
 
                 let license = metadata.license
                 let packageLicense: PackageCollectionModel.V1.License?
-                if let license = license {
-                    packageLicense = .init(name: license.name, url: license.sourceURL)
-                } else if let licenseURL = metadata.license_url,
-                    let licenseURL = URL(string: licenseURL) {
-                    packageLicense = .init(name: nil, url: licenseURL)
+                if let licenseURL = metadata.license_url,
+                   let licenseURL = URL(string: licenseURL) {
+                    packageLicense = .init(name: license?.key, url: licenseURL)
                 } else {
                     packageLicense = nil
                 }
@@ -161,14 +159,12 @@ extension GitLabPackageMetadataProvider {
     fileprivate struct License: Codable {
         let htmlURL: Foundation.URL
         let sourceURL: Foundation.URL
-        let nickname: String?
-        let name: String?
+        let key: String?
 
         private enum CodingKeys: String, CodingKey {
             case htmlURL = "html_url"
             case sourceURL = "source_url"
-            case nickname
-            case name
+            case key
         }
     }
 }
