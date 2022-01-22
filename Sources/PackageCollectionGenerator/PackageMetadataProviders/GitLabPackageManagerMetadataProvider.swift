@@ -148,8 +148,8 @@ extension GitLabPackageMetadataProvider {
             case fullName = "name_with_namespace"
             case description
             case topics
-            case license_url
-            case readme_url
+            case licenseURL = "license_url"
+            case readmeURL = "readme_url"
             case license
         }
     }
