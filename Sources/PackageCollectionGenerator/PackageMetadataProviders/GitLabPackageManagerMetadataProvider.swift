@@ -69,7 +69,7 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
 
                 let license = metadata.license
                 let packageLicense: PackageCollectionModel.V1.License?
-                if let licenseURL = metadata.license_url,
+                if let licenseURL = metadata.licenseURL,
                    let licenseURL = URL(string: licenseURL) {
                     packageLicense = .init(name: license?.key, url: licenseURL)
                 } else {
