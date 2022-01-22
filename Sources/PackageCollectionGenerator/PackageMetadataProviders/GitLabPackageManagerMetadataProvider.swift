@@ -79,7 +79,7 @@ struct GitLabPackageMetadataProvider: PackageMetadataProvider {
                 let model = PackageBasicMetadata(
                     summary: metadata.description,
                     keywords: metadata.topics,
-                    readmeURL: metadata.readme_url.flatMap { URL(string: $0) },
+                    readmeURL: metadata.readmeURL.flatMap { URL(string: $0) },
                     license: packageLicense
                 )
 
