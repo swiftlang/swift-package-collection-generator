@@ -73,20 +73,24 @@ public struct GitURL {
     public let owner: String
     public let repository: String
 
-    public static func from(_ gitURL: String) -> GitURL? {
+    public static func from(_ initialGitURL: String) -> GitURL? {
+        let gitURL: String
+        if initialGitURL.suffix(4).lowercased() == ".git" {
+            gitURL = String(initialGitURL.dropLast(4))
+        } else {
+            gitURL = initialGitURL
+        }
+
         do {
-            let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([a-z0-9._-]+)$"#, options: .caseInsensitive)
+            let regex = try NSRegularExpression(pattern: #"([^/@]+)[:/]([^:/]+)/([^/]+)$"#, options: .caseInsensitive)
             if let match = regex.firstMatch(in: gitURL, options: [], range: NSRange(location: 0, length: gitURL.count)) {
                 if let hostRange = Range(match.range(at: 1), in: gitURL),
                    let ownerRange = Range(match.range(at: 2), in: gitURL),
                    let repoRange = Range(match.range(at: 3), in: gitURL) {
                     let host = String(gitURL[hostRange])
                     let owner = String(gitURL[ownerRange])
-                    var repository = String(gitURL[repoRange])
+                    let repository = String(gitURL[repoRange])
 
-                    if repository.suffix(4) == ".git" {
-                        repository = String(repository.dropLast(4))
-                    }
                     return GitURL(host: host, owner: owner, repository: repository)
                 }
             }
