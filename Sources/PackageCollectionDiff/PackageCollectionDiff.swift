@@ -41,7 +41,6 @@ public struct PackageCollectionDiff: ParsableCommand {
 
     public func run() throws {
         Backtrace.install()
-        Process.verbose = self.verbose
 
         print("Comparing collections located at \(self.collectionOnePath) and \(self.collectionTwoPath)", inColor: .cyan, verbose: self.verbose)
 
