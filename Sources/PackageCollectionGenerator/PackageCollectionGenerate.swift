@@ -67,7 +67,6 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     public func run() throws {
         Backtrace.install()
-        Process.verbose = self.verbose
 
         // Parse auth tokens
         let authTokens = self.authToken.reduce(into: [AuthTokenType: String]()) { authTokens, authToken in

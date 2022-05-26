@@ -62,8 +62,6 @@ public struct PackageCollectionSign: ParsableCommand {
             throw PackageCollectionSigningError.emptyCertChain
         }
 
-        Process.verbose = self.verbose
-
         print("Signing package collection located at \(self.inputPath)", inColor: .cyan, verbose: self.verbose)
 
         let jsonDecoder = JSONDecoder.makeWithDefaults()
