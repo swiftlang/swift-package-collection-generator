@@ -64,7 +64,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                         summary: "Package Baz",
                         versions: ["1.0.0"]
                     ),
-                ]
+                ],
+                metadataProviders: ["package-collection-tests.com": "github"]
             )
             let jsonEncoder = JSONEncoder.makeWithDefaults()
             let inputData = try jsonEncoder.encode(input)
@@ -235,7 +236,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                         summary: "Package Foo & Bar",
                         excludedVersions: ["0.1.0"]
                     ),
-                ]
+                ],
+                metadataProviders: ["package-collection-tests.com": "github"]
             )
             let jsonEncoder = JSONEncoder.makeWithDefaults()
             let inputData = try jsonEncoder.encode(input)

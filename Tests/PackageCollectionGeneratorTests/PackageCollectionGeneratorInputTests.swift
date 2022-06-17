@@ -39,7 +39,8 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     url: URL(string: "https://package-collection-tests.com/repos/foobaz.git")!
                 ),
             ],
-            author: .init(name: "Jane Doe")
+            author: .init(name: "Jane Doe"),
+            metadataProviders: ["package-collection-tests.com": "github"]
         )
 
         let inputFilePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "test-input.json")
@@ -68,7 +69,8 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
                 ),
             ],
-            author: .init(name: "Jane Doe")
+            author: .init(name: "Jane Doe"),
+            metadataProviders: ["package-collection-tests.com": "github"]
         )
 
         let data = try JSONEncoder().encode(input)

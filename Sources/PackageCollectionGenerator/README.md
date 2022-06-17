@@ -47,6 +47,7 @@ Collection metadata:
 * `keywords`: An array of keywords that the collection is associated with. **Optional.**
 * `author`: The author of this package collection. **Optional.**
     * `name`: The author name.
+* `metadataProviders`: A dictionary describing a mapping from hosts to metadata-provider (github / gitlab). **Optional.**
 * `packages`: An array of package objects.
 
 Each item in the `packages` array is a package object with the following fields:
@@ -83,6 +84,9 @@ Each item in the `packages` array is a package object with the following fields:
   ],
   "author": {
     "name": "Jane Doe"
+  },
+  "metadataProviders": {
+    "www.example.com": "gitlab"
   }
 }
 ```

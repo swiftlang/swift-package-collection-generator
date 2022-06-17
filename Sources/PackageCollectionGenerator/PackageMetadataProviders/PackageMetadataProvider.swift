@@ -22,11 +22,14 @@ protocol PackageMetadataProvider {
 
 enum AuthTokenType: Hashable, CustomStringConvertible {
     case github(_ host: String)
+    case gitlab(_ host: String)
 
     var description: String {
         switch self {
         case .github(let host):
             return "github(\(host))"
+        case .gitlab(let host):
+            return "gitlab(\(host))"
         }
     }
 
@@ -34,6 +37,8 @@ enum AuthTokenType: Hashable, CustomStringConvertible {
         switch type {
         case "github":
             return .github(host)
+        case "gitlab":
+            return .gitlab(host)
         default:
             return nil
         }

@@ -17,7 +17,13 @@
       "url": "https://package-collection-tests.com/repos/foobaz.git"
     }
   ],
+  "metadataProviders": {
+      "package-collection-tests.com": "github"
+  },
   "author": {
     "name": "Jane Doe"
+  },
+  "metadataProviders": {
+      "package-collection-tests.com": "github"
   }
 }
