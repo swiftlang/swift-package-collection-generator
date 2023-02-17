@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -27,16 +27,16 @@ private typealias Model = PackageCollectionModel.V1
 final class PackageCollectionSignTests: XCTestCase {
     func test_help() throws {
         XCTAssert(try executeCommand(command: "package-collection-sign --help")
-            .stdout.contains("USAGE: package-collection-sign <input-path> <output-path> <private-key-path> [<cert-chain-paths> ...] [--verbose]"))
+            .stdout.contains("USAGE: package-collection-sign <input-path> <output-path> <private-key-path> <cert-chain-paths> ... [--verbose]"))
     }
 
     func test_endToEnd() throws {
         try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
-            let inputPath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "test.json")
+            let inputPath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "test.json")
             let outputPath = tmpDir.appending(component: "signed-test.json")
             // These are not actually used since we are using MockPackageCollectionSigner
-            let privateKeyPath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "Test_ec_key.pem")
-            let certPath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "Test_ec.cer")
+            let privateKeyPath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "Test_ec_key.pem")
+            let certPath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "Test_ec.cer")
 
             let cmd = try PackageCollectionSign.parse([
                 inputPath.pathString,
@@ -64,8 +64,7 @@ private struct MockPackageCollectionSigner: PackageCollectionSigner {
               certChainPaths: [URL],
               privateKeyPEM: Data,
               certPolicyKey: CertificatePolicyKey,
-              callback: @escaping (Result<Model.SignedCollection, Error>) -> Void)
-    {
+              callback: @escaping (Result<Model.SignedCollection, Error>) -> Void) {
         let signature = Model.Signature(
             signature: "test signature",
             certificate: Model.Signature.Certificate(

@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -34,15 +34,15 @@ final class PackageCollectionGenerateTests: XCTestCase {
     func test_endToEnd() throws {
         try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
             // TestRepoOne has tags [0.1.0]
-            let repoOneArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
+            let repoOneArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoOneArchivePath.pathString])
 
             // TestRepoTwo has tags [0.1.0, 0.2.0]
-            let repoTwoArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoTwo.tgz")
+            let repoTwoArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoTwo.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoTwoArchivePath.pathString])
 
             // TestRepoThree has tags [1.0.0]
-            let repoThreeArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoThree.tgz")
+            let repoThreeArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoThree.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoThreeArchivePath.pathString])
 
             // Prepare input.json
@@ -213,11 +213,11 @@ final class PackageCollectionGenerateTests: XCTestCase {
     func test_excludedVersions() throws {
         try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
             // TestRepoOne has tags [0.1.0]
-            let repoOneArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
+            let repoOneArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoOneArchivePath.pathString])
 
             // TestRepoTwo has tags [0.1.0, 0.2.0]
-            let repoTwoArchivePath = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "TestRepoTwo.tgz")
+            let repoTwoArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoTwo.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoTwoArchivePath.pathString])
 
             // Prepare input.json

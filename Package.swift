@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.7
 
 import PackageDescription
 
@@ -7,83 +7,90 @@ let package = Package(
     // Required for JSONEncoder/Decoder formatting and ISO-8601 support
     platforms: [.macOS("10.15.4")],
     products: [
-        .library(name: "PackageCollectionGenerator", targets: ["PackageCollectionGenerator"]),
-        .executable(name: "package-collection-generate", targets: ["PackageCollectionGeneratorExecutable"]),
-        .library(name: "PackageCollectionSigner", targets: ["PackageCollectionSigner"]),
-        .executable(name: "package-collection-sign", targets: ["PackageCollectionSignerExecutable"]),
-        .library(name: "PackageCollectionValidator", targets: ["PackageCollectionValidator"]),
-        .executable(name: "package-collection-validate", targets: ["PackageCollectionValidatorExecutable"]),
-        .library(name: "PackageCollectionDiff", targets: ["PackageCollectionDiff"]),
-        .executable(name: "package-collection-diff", targets: ["PackageCollectionDiffExecutable"]),
+        .executable(name: "package-collection-generate", targets: ["PackageCollectionGenerator"]),
+        .executable(name: "package-collection-sign", targets: ["PackageCollectionSigner"]),
+        .executable(name: "package-collection-validate", targets: ["PackageCollectionValidator"]),
+        .executable(name: "package-collection-diff", targets: ["PackageCollectionDiff"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "1.0.2")),
-        // FIXME: need semver
-        .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("main")),
+        .package(url: "https://github.com/apple/swift-package-manager.git", branch: "main"),
         .package(url: "https://github.com/swift-server/swift-backtrace.git", .upToNextMajor(from: "1.1.0")),
     ],
     targets: [
-        .target(name: "Utilities", dependencies: [
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-        ]),
+        .target(name: "Utilities",
+                dependencies: [
+                    .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                ]),
 
-        .target(name: "PackageCollectionGenerator", dependencies: [
-            "Utilities",
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-            .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            .product(name: "Backtrace", package: "swift-backtrace"),
-        ]),
-        .target(name: "PackageCollectionGeneratorExecutable", dependencies: ["PackageCollectionGenerator"]),
+        .executableTarget(name: "PackageCollectionGenerator",
+                          dependencies: [
+                              "Utilities",
+                              .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                              .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                              .product(name: "Backtrace", package: "swift-backtrace"),
+                          ],
+                          exclude: ["README.md"]),
 
-        .target(name: "PackageCollectionSigner", dependencies: [
-            "Utilities",
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-            .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            .product(name: "Backtrace", package: "swift-backtrace"),
-        ]),
-        .target(name: "PackageCollectionSignerExecutable", dependencies: ["PackageCollectionSigner"]),
+        .executableTarget(name: "PackageCollectionSigner",
+                          dependencies: [
+                              "Utilities",
+                              .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                              .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                              .product(name: "Backtrace", package: "swift-backtrace"),
+                          ],
+                          exclude: ["README.md"]),
 
-        .target(name: "PackageCollectionValidator", dependencies: [
-            "Utilities",
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-            .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            .product(name: "Backtrace", package: "swift-backtrace"),
-        ]),
-        .target(name: "PackageCollectionValidatorExecutable", dependencies: ["PackageCollectionValidator"]),
+        .executableTarget(name: "PackageCollectionValidator",
+                          dependencies: [
+                              "Utilities",
+                              .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                              .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                              .product(name: "Backtrace", package: "swift-backtrace"),
+                          ],
+                          exclude: ["README.md"]),
 
-        .target(name: "PackageCollectionDiff", dependencies: [
-            "Utilities",
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-            .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            .product(name: "Backtrace", package: "swift-backtrace"),
-        ]),
-        .target(name: "PackageCollectionDiffExecutable", dependencies: ["PackageCollectionDiff"]),
+        .executableTarget(name: "PackageCollectionDiff",
+                          dependencies: [
+                              "Utilities",
+                              .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                              .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                              .product(name: "Backtrace", package: "swift-backtrace"),
+                          ],
+                          exclude: ["README.md"]),
 
-        .target(name: "TestUtilities", dependencies: [
-            .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            .product(name: "SwiftPMPackageCollections", package: "SwiftPM"),
-        ]),
+        .target(name: "TestUtilities",
+                dependencies: [
+                    .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                    .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                ]),
 
-        .testTarget(name: "UtilitiesTests", dependencies: ["Utilities"]),
-        .testTarget(name: "PackageCollectionGeneratorTests", dependencies: ["PackageCollectionGenerator"]),
-        .testTarget(name: "PackageCollectionGeneratorExecutableTests", dependencies: [
-            "PackageCollectionGeneratorExecutable",
-            "TestUtilities",
-        ]),
+        .testTarget(name: "UtilitiesTests",
+                    dependencies: ["Utilities"]),
 
-        .testTarget(name: "PackageCollectionSignerExecutableTests", dependencies: [
-            "PackageCollectionSignerExecutable",
-            "TestUtilities",
-        ]),
+        .testTarget(name: "PackageCollectionGeneratorTests",
+                    dependencies: ["PackageCollectionGenerator"],
+                    exclude: ["Inputs"]),
 
-        .testTarget(name: "PackageCollectionValidatorExecutableTests", dependencies: [
-            "PackageCollectionValidatorExecutable",
-            "TestUtilities",
-        ]),
+        .testTarget(name: "PackageCollectionSignerTests",
+                    dependencies: [
+                        "PackageCollectionSigner",
+                        "TestUtilities",
+                    ],
+                    exclude: ["Inputs"]),
 
-        .testTarget(name: "PackageCollectionDiffExecutableTests", dependencies: [
-            "PackageCollectionDiffExecutable",
-            "TestUtilities",
-        ]),
+        .testTarget(name: "PackageCollectionValidatorTests",
+                    dependencies: [
+                        "PackageCollectionValidator",
+                        "TestUtilities",
+                    ],
+                    exclude: ["Inputs"]),
+
+        .testTarget(name: "PackageCollectionDiffTests",
+                    dependencies: [
+                        "PackageCollectionDiff",
+                        "TestUtilities",
+                    ],
+                    exclude: ["Inputs"]),
     ]
 )

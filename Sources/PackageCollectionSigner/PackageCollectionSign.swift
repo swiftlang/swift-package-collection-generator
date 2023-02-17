@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -26,6 +26,7 @@ import PackageCollectionsSigning
 import TSCBasic
 import Utilities
 
+@main
 public struct PackageCollectionSign: ParsableCommand {
     public static let configuration = CommandConfiguration(
         abstract: "Sign a package collection."
@@ -68,12 +69,12 @@ public struct PackageCollectionSign: ParsableCommand {
         let collection = try jsonDecoder.decode(Model.Collection.self, from: Data(contentsOf: URL(fileURLWithPath: self.inputPath)))
 
         let privateKeyURL = URL(fileURLWithPath: self.privateKeyPath)
-        let certChainURLs: [URL] = self.certChainPaths.map { ensureAbsolute(path: $0).asURL }
+        let certChainURLs: [URL] = try self.certChainPaths.map { try ensureAbsolute(path: $0).asURL }
 
         try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
             // The last item in the array is the root certificate and we want to trust it, so here we
             // create a temp directory, copy the root certificate to it, and make it the trustedRootCertsDir.
-            let rootCertPath = AbsolutePath(certChainURLs.last!.path) // !-safe since certChain cannot be empty at this point
+            let rootCertPath = try AbsolutePath(validating: certChainURLs.last!.path) // !-safe since certChain cannot be empty at this point
             let rootCertFilename = rootCertPath.components.last!
             try localFileSystem.copy(from: rootCertPath, to: tmpDir.appending(component: rootCertFilename))
 
@@ -86,7 +87,7 @@ public struct PackageCollectionSign: ParsableCommand {
             }
 
             // Make sure the output directory exists
-            let outputAbsolutePath = ensureAbsolute(path: self.outputPath)
+            let outputAbsolutePath = try ensureAbsolute(path: self.outputPath)
             let outputDirectory = outputAbsolutePath.parentDirectory
             try localFileSystem.createDirectory(outputDirectory, recursive: true)
 

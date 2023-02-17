@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -47,24 +47,24 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
         let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
-        let handler: HTTPClient.Handler = { request, _, completion in
+        let handler: LegacyHTTPClient.Handler = { request, _, completion in
             guard request.headers.get("Authorization").first == "token \(authTokens.first!.value)" else {
                 return completion(.success(.init(statusCode: 401)))
             }
 
             switch (request.method, request.url) {
             case (.get, apiURL):
-                let data = self.readGitHubData(filename: "metadata.json")!
+                let data = try! self.readGitHubData(filename: "metadata.json")!
                 completion(.success(.init(statusCode: 200,
                                           headers: .init([.init(name: "Content-Length", value: "\(data.count)")]),
                                           body: data)))
             case (.get, apiURL.appendingPathComponent("readme")):
-                let data = self.readGitHubData(filename: "readme.json")!
+                let data = try! self.readGitHubData(filename: "readme.json")!
                 completion(.success(.init(statusCode: 200,
                                           headers: .init([.init(name: "Content-Length", value: "\(data.count)")]),
                                           body: data)))
             case (.get, apiURL.appendingPathComponent("license")):
-                let data = self.readGitHubData(filename: "license.json")!
+                let data = try! self.readGitHubData(filename: "license.json")!
                 completion(.success(.init(statusCode: 200,
                                           headers: .init([.init(name: "Content-Length", value: "\(data.count)")]),
                                           body: data)))
@@ -73,7 +73,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
             }
         }
 
-        var httpClient = HTTPClient(handler: handler)
+        let httpClient = LegacyHTTPClient(handler: handler)
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
 
@@ -92,7 +92,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
         let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
-        let handler: HTTPClient.Handler = { request, _, completion in
+        let handler: LegacyHTTPClient.Handler = { request, _, completion in
             if request.headers.get("Authorization").first == "token \(authTokens.first!.value)" {
                 completion(.success(.init(statusCode: 401)))
             } else {
@@ -101,7 +101,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
             }
         }
 
-        var httpClient = HTTPClient(handler: handler)
+        let httpClient = LegacyHTTPClient(handler: handler)
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
 
@@ -116,11 +116,11 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
         let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
-        let handler: HTTPClient.Handler = { _, _, completion in
+        let handler: LegacyHTTPClient.Handler = { _, _, completion in
             completion(.success(.init(statusCode: 404)))
         }
 
-        var httpClient = HTTPClient(handler: handler)
+        let httpClient = LegacyHTTPClient(handler: handler)
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
 
@@ -135,14 +135,14 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
         let authTokens = [AuthTokenType.github("github.com"): "foo"]
 
-        let handler: HTTPClient.Handler = { request, _, completion in
+        let handler: LegacyHTTPClient.Handler = { request, _, completion in
             guard request.headers.get("Authorization").first == "token \(authTokens.first!.value)" else {
                 return completion(.success(.init(statusCode: 401)))
             }
 
             switch (request.method, request.url) {
             case (.get, apiURL):
-                let data = self.readGitHubData(filename: "metadata.json")!
+                let data = try! self.readGitHubData(filename: "metadata.json")!
                 completion(.success(.init(statusCode: 200,
                                           headers: .init([.init(name: "Content-Length", value: "\(data.count)")]),
                                           body: data)))
@@ -151,7 +151,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
             }
         }
 
-        var httpClient = HTTPClient(handler: handler)
+        let httpClient = LegacyHTTPClient(handler: handler)
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
 
@@ -168,11 +168,11 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         let repoURL = URL(string: "https://github.com/octocat/Hello-World.git")!
         let apiURL = URL(string: "https://api.github.com/repos/octocat/Hello-World")!
 
-        let handler: HTTPClient.Handler = { _, _, completion in
+        let handler: LegacyHTTPClient.Handler = { _, _, completion in
             completion(.success(.init(statusCode: 401)))
         }
 
-        var httpClient = HTTPClient(handler: handler)
+        let httpClient = LegacyHTTPClient(handler: handler)
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
 
@@ -198,7 +198,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
 
         let repoURL = URL(string: "https://github.com/apple/swift-numerics.git")!
 
-        var httpClient = HTTPClient()
+        let httpClient = LegacyHTTPClient()
         httpClient.configuration.circuitBreakerStrategy = .none
         httpClient.configuration.retryStrategy = .none
         httpClient.configuration.requestHeaders = .init()
@@ -219,8 +219,8 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         }
     }
 
-    private func readGitHubData(filename: String) -> Data? {
-        let path = AbsolutePath(#file).parentDirectory.appending(components: "Inputs", "GitHub", filename)
+    private func readGitHubData(filename: String) throws -> Data? {
+        let path = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "GitHub", filename)
         guard let contents = try? localFileSystem.readFileContents(path).contents else {
             return nil
         }

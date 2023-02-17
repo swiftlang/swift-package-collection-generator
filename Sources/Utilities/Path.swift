@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -15,10 +15,13 @@
 import Foundation
 import TSCBasic
 
-public func ensureAbsolute(path: String) -> AbsolutePath {
+public func ensureAbsolute(path: String) throws -> AbsolutePath {
     do {
         return try AbsolutePath(validating: path)
     } catch {
-        return AbsolutePath(path, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
+        return try AbsolutePath(
+            validating: path,
+            relativeTo: AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+        )
     }
 }
