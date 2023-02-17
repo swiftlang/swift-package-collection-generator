@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2021-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -23,10 +23,10 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
     private static let apiHostPrefix = "api."
 
     private let authTokens: [AuthTokenType: String]
-    private let httpClient: HTTPClient
+    private let httpClient: LegacyHTTPClient
     private let decoder: JSONDecoder
 
-    init(authTokens: [AuthTokenType: String] = [:], httpClient: HTTPClient? = nil) {
+    init(authTokens: [AuthTokenType: String] = [:], httpClient: LegacyHTTPClient? = nil) {
         self.authTokens = authTokens
         self.httpClient = httpClient ?? Self.makeDefaultHTTPClient()
         self.decoder = JSONDecoder.makeWithDefaults()
@@ -124,8 +124,8 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
         return nil
     }
 
-    private func makeRequestOptions(validResponseCodes: [Int]) -> HTTPClientRequest.Options {
-        var options = HTTPClientRequest.Options()
+    private func makeRequestOptions(validResponseCodes: [Int]) -> LegacyHTTPClientRequest.Options {
+        var options = LegacyHTTPClientRequest.Options()
         options.addUserAgent = true
         options.validResponseCodes = validResponseCodes
         options.authorizationProvider = { url in
@@ -137,8 +137,8 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
         return options
     }
 
-    private static func makeDefaultHTTPClient() -> HTTPClient {
-        var client = HTTPClient()
+    private static func makeDefaultHTTPClient() -> LegacyHTTPClient {
+        let client = LegacyHTTPClient()
         client.configuration.requestTimeout = .seconds(2)
         client.configuration.retryStrategy = .exponentialBackoff(maxAttempts: 3, baseDelay: .milliseconds(50))
         client.configuration.circuitBreakerStrategy = .hostErrors(maxErrors: 50, age: .seconds(30))

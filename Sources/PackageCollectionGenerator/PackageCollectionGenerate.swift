@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020-2021 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -23,6 +23,7 @@ import TSCBasic
 import TSCUtility
 import Utilities
 
+@main
 public struct PackageCollectionGenerate: ParsableCommand {
     public static let configuration = CommandConfiguration(
         abstract: "Generate a package collection from the given list of packages."
@@ -130,7 +131,10 @@ public struct PackageCollectionGenerate: ParsableCommand {
         do {
             outputAbsolutePath = try AbsolutePath(validating: self.outputPath)
         } catch {
-            outputAbsolutePath = AbsolutePath(self.outputPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
+            outputAbsolutePath = try AbsolutePath(
+                validating: self.outputPath,
+                relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+            )
         }
         let outputDirectory = outputAbsolutePath.parentDirectory
         try localFileSystem.createDirectory(outputDirectory, recursive: true)
@@ -153,7 +157,10 @@ public struct PackageCollectionGenerate: ParsableCommand {
             do {
                 workingDirectoryAbsolutePath = try AbsolutePath(validating: workingDirectoryPath)
             } catch {
-                workingDirectoryAbsolutePath = AbsolutePath(workingDirectoryPath, relativeTo: AbsolutePath(FileManager.default.currentDirectoryPath))
+                workingDirectoryAbsolutePath = try AbsolutePath(
+                    validating: workingDirectoryPath,
+                    relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+                )
             }
 
             // Extract directory name from repository URL
