@@ -5,6 +5,7 @@
   "packages": [
     {
       "url": "https://package-collection-tests.com/repos/foobar.git",
+      "identity": "repos.foobar",
       "summary": "Package Foobar",
       "keywords": ["test package"],
       "versions": ["0.2.0", "0.1.0"],

@@ -57,6 +57,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     ),
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                        identity: "repos.two",
                         summary: "Package Foo & Bar"
                     ),
                     PackageCollectionGeneratorInput.Package(
@@ -100,6 +101,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 ),
                 Model.Collection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                    identity: "repos.two",
                     summary: "Package Foo & Bar",
                     keywords: nil,
                     versions: [
@@ -232,6 +234,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     ),
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                        identity: "repos.two",
                         summary: "Package Foo & Bar",
                         excludedVersions: ["0.1.0"]
                     ),
@@ -285,6 +288,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 ),
                 Model.Collection.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
+                    identity: "repos.two",
                     summary: "Package Foo & Bar",
                     keywords: nil,
                     versions: [
