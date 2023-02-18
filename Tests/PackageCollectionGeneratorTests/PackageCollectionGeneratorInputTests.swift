@@ -27,6 +27,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
+                    identity: "repos.foobar",
                     summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["0.2.0", "0.1.0"],
@@ -59,6 +60,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
             packages: [
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobar.git")!,
+                    identity: "repos.foobar",
                     summary: "Package Foobar",
                     keywords: ["test package"],
                     versions: ["1.3.2"],

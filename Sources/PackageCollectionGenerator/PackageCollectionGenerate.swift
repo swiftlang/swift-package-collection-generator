@@ -254,6 +254,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
         return Model.Collection.Package(
             url: package.url,
+            identity: package.identity,
             summary: package.summary ?? additionalMetadata?.summary,
             keywords: package.keywords ?? additionalMetadata?.keywords,
             versions: packageVersions,
