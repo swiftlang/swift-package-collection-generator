@@ -398,6 +398,8 @@ extension PackageCollectionModel.V1.ProductType {
             self = .snippet
         case .test:
             self = .test
+        case .macro:
+            self = .macro
         }
     }
 }
