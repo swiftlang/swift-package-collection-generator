@@ -6,8 +6,8 @@ services:
     image: swift-package-collection-generator:20.04-5.7
     build:
       args:
-        base_image: "swiftlang/swift:nightly-main-focal"
         ubuntu_version: "focal"
+        swift_version: "5.7"
 
   test:
     image: swift-package-collection-generator:20.04-5.7
