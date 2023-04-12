@@ -12,7 +12,13 @@
       "excludedVersions": ["v0.1.0"],
       "excludedProducts": ["Foo"],
       "excludedTargets": ["Bar"],
-      "readmeURL": "https://package-collection-tests.com/repos/foobar/README"
+      "readmeURL": "https://package-collection-tests.com/repos/foobar/README",
+      "signer": {
+        "type": "ADP",
+        "commonName": "J. Appleseed",
+        "organizationalUnitName": "A1",
+        "organizationName": "Appleseed Inc."
+      }
     },
     {
       "url": "https://package-collection-tests.com/repos/foobaz.git"
