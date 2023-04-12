@@ -45,6 +45,13 @@ final class PackageCollectionGenerateTests: XCTestCase {
             let repoThreeArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoThree.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoThreeArchivePath.pathString])
 
+            let signer = PackageCollectionModel.V1.Signer(
+                type: "ADP",
+                commonName: "J. Appleseed",
+                organizationalUnitName: "A1",
+                organizationName: "Appleseed Inc."
+            )
+
             // Prepare input.json
             let input = PackageCollectionGeneratorInput(
                 name: "Test Package Collection",
@@ -58,7 +65,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoTwo.git")!,
                         identity: "repos.two",
-                        summary: "Package Foo & Bar"
+                        summary: "Package Foo & Bar",
+                        signer: signer
                     ),
                     PackageCollectionGeneratorInput.Package(
                         url: URL(string: "https://package-collection-tests.com/repos/TestRepoThree.git")!,
@@ -93,6 +101,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: nil,
                             createdAt: nil
                         ),
                     ],
@@ -126,6 +136,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: signer,
                             createdAt: nil
                         ),
                         Model.Collection.Package.Version(
@@ -143,6 +155,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: signer,
                             createdAt: nil
                         ),
                     ],
@@ -169,6 +183,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: nil,
                             createdAt: nil
                         ),
                     ],
@@ -280,6 +296,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: nil,
                             createdAt: nil
                         ),
                     ],
@@ -313,6 +331,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
                             defaultToolsVersion: "5.2",
                             verifiedCompatibility: nil,
                             license: nil,
+                            author: nil,
+                            signer: nil,
                             createdAt: nil
                         ),
                     ],
