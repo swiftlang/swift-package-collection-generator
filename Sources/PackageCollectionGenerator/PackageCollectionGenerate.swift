@@ -233,6 +233,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                     for: version,
                     excludedProducts: package.excludedProducts.map { Set($0) } ?? [],
                     excludedTargets: package.excludedTargets.map { Set($0) } ?? [],
+                    signer: package.signer,
                     gitDirectoryPath: gitDirectoryPath,
                     jsonDecoder: jsonDecoder
                 )
@@ -266,6 +267,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func generateMetadata(for version: String,
                                   excludedProducts: Set<String>,
                                   excludedTargets: Set<String>,
+                                  signer: PackageCollectionModel.V1.Signer?,
                                   gitDirectoryPath: AbsolutePath,
                                   jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version
     {
@@ -291,6 +293,8 @@ public struct PackageCollectionGenerate: ParsableCommand {
             defaultToolsVersion: defaultManifest.toolsVersion,
             verifiedCompatibility: nil,
             license: nil,
+            author: nil,
+            signer: signer,
             createdAt: gitTagInfo?.createdAt
         )
     }

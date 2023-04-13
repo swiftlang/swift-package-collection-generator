@@ -94,6 +94,8 @@ public extension PackageCollectionGeneratorInput {
 
         /// The URL of the package's README.
         public let readmeURL: URL?
+        
+        public let signer: PackageCollectionModel.V1.Signer?
 
         public init(
             url: URL,
@@ -104,7 +106,8 @@ public extension PackageCollectionGeneratorInput {
             excludedVersions: [String]? = nil,
             excludedProducts: [String]? = nil,
             excludedTargets: [String]? = nil,
-            readmeURL: URL? = nil
+            readmeURL: URL? = nil,
+            signer: PackageCollectionModel.V1.Signer? = nil
         ) {
             self.url = url
             self.identity = identity
@@ -115,6 +118,7 @@ public extension PackageCollectionGeneratorInput {
             self.excludedProducts = excludedProducts
             self.excludedTargets = excludedTargets
             self.readmeURL = readmeURL
+            self.signer = signer
         }
     }
 }
@@ -131,7 +135,8 @@ extension PackageCollectionGeneratorInput.Package: CustomStringConvertible {
                 excludedVersions=\(self.excludedVersions.map { "\($0)" } ?? "nil"),
                 excludedProducts=\(self.excludedProducts.map { "\($0)" } ?? "nil"),
                 excludedTargets=\(self.excludedTargets.map { "\($0)" } ?? "nil"),
-                readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil")
+                readmeURL=\(self.readmeURL.map { "\($0)" } ?? "nil"),
+                signer=\(self.signer.map { "\($0)" } ?? "nil")
             }
         """
     }
