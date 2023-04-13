@@ -16,6 +16,7 @@ import Foundation
 import XCTest
 
 @testable import PackageCollectionGenerator
+import PackageCollectionsModel
 import TSCBasic
 
 class PackageCollectionGeneratorInputTests: XCTestCase {
@@ -34,7 +35,8 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     excludedVersions: ["v0.1.0"],
                     excludedProducts: ["Foo"],
                     excludedTargets: ["Bar"],
-                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
+                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!,
+                    signer: .init(type: "ADP", commonName: "J. Appleseed", organizationalUnitName: "A1", organizationName: "Appleseed Inc.")
                 ),
                 PackageCollectionGeneratorInput.Package(
                     url: URL(string: "https://package-collection-tests.com/repos/foobaz.git")!
@@ -67,7 +69,8 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
                     excludedVersions: ["0.8.1"],
                     excludedProducts: ["Foo"],
                     excludedTargets: ["Bar"],
-                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!
+                    readmeURL: URL(string: "https://package-collection-tests.com/repos/foobar/README")!,
+                    signer: .init(type: "ADP", commonName: "J. Appleseed", organizationalUnitName: "A1", organizationName: "Appleseed Inc.")
                 ),
             ],
             author: .init(name: "Jane Doe")
