@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "swift-package-collection-generator",
     // Required for JSONEncoder/Decoder formatting and ISO-8601 support
-    platforms: [.macOS("10.15.4")],
+    platforms: [.macOS(.v12)],
     products: [
         .executable(name: "package-collection-generate", targets: ["PackageCollectionGenerator"]),
         .executable(name: "package-collection-sign", targets: ["PackageCollectionSigner"]),
