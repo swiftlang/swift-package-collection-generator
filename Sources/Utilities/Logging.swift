@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Package Collection Generator open source project
 //
-// Copyright (c) 2020 Apple Inc. and the Swift Package Collection Generator project authors
+// Copyright (c) 2020-2023 Apple Inc. and the Swift Package Collection Generator project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -52,7 +52,7 @@ private final class InteractiveWriter {
             term.write(string, inColor: color, bold: bold)
             term.endLine()
         } else {
-            self.stream <<< string
+            self.stream.send(string)
             self.stream.flush()
         }
     }
