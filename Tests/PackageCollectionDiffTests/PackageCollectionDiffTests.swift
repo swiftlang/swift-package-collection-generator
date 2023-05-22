@@ -14,9 +14,9 @@
 
 import XCTest
 
+import Basics
 @testable import PackageCollectionDiff
 @testable import TestUtilities
-import TSCBasic
 
 final class PackageCollectionDiffTests: XCTestCase {
     func test_help() throws {

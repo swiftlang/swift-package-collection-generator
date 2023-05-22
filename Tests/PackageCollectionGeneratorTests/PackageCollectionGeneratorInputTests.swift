@@ -15,9 +15,9 @@
 import Foundation
 import XCTest
 
+import Basics
 @testable import PackageCollectionGenerator
 import PackageCollectionsModel
-import TSCBasic
 
 class PackageCollectionGeneratorInputTests: XCTestCase {
     func testLoadFromFile() throws {

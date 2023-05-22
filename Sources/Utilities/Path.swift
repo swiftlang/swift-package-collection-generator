@@ -12,8 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Basics
 import Foundation
-import TSCBasic
 
 public func ensureAbsolute(path: String) throws -> AbsolutePath {
     do {

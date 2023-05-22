@@ -14,9 +14,9 @@
 
 import XCTest
 
+import Basics
 @testable import PackageCollectionValidator
 @testable import TestUtilities
-import TSCBasic
 
 final class PackageCollectionValidateTests: XCTestCase {
     func test_help() throws {

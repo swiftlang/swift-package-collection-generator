@@ -20,7 +20,6 @@ import Basics
 import PackageCollectionsModel
 import PackageCollectionsSigning
 @testable import TestUtilities
-import TSCBasic
 
 private typealias Model = PackageCollectionModel.V1
 

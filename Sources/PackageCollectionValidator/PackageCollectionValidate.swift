@@ -20,7 +20,6 @@ import Basics
 import enum PackageCollections.ValidationError
 import struct PackageCollections.ValidationMessage
 import enum PackageCollectionsModel.PackageCollectionModel
-import TSCBasic
 import Utilities
 
 @main

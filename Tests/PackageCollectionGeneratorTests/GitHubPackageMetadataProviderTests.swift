@@ -17,7 +17,7 @@ import XCTest
 
 import Basics
 @testable import PackageCollectionGenerator
-import TSCBasic
+import enum TSCBasic.ProcessEnv
 
 final class GitHubPackageMetadataProviderTests: XCTestCase {
     func test_apiURL() throws {
@@ -78,7 +78,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         httpClient.configuration.retryStrategy = .none
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)
-        let metadata = try tsc_await { callback in provider.get(repoURL, callback: callback) }
+        let metadata = try temp_await { callback in provider.get(repoURL, callback: callback) }
 
         XCTAssertEqual("This your first repo!", metadata.summary)
         XCTAssertEqual(["octocat", "atom", "electron", "api"], metadata.keywords)
@@ -106,7 +106,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         httpClient.configuration.retryStrategy = .none
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)
-        XCTAssertThrowsError(try tsc_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
+        XCTAssertThrowsError(try temp_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .invalidAuthToken(apiURL))
         }
     }
@@ -125,7 +125,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         httpClient.configuration.retryStrategy = .none
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)
-        XCTAssertThrowsError(try tsc_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
+        XCTAssertThrowsError(try temp_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .notFound(apiURL))
         }
     }
@@ -156,7 +156,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         httpClient.configuration.retryStrategy = .none
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)
-        let metadata = try tsc_await { callback in provider.get(repoURL, callback: callback) }
+        let metadata = try temp_await { callback in provider.get(repoURL, callback: callback) }
 
         XCTAssertEqual("This your first repo!", metadata.summary)
         XCTAssertEqual(["octocat", "atom", "electron", "api"], metadata.keywords)
@@ -177,7 +177,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         httpClient.configuration.retryStrategy = .none
 
         let provider = GitHubPackageMetadataProvider(httpClient: httpClient)
-        XCTAssertThrowsError(try tsc_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
+        XCTAssertThrowsError(try temp_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .permissionDenied(apiURL))
         }
     }
@@ -185,7 +185,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
     func testInvalidURL() throws {
         let repoURL = URL(string: "/")!
         let provider = GitHubPackageMetadataProvider()
-        XCTAssertThrowsError(try tsc_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
+        XCTAssertThrowsError(try temp_await { callback in provider.get(repoURL, callback: callback) }, "should throw error") { error in
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .invalidGitURL(repoURL))
         }
     }
@@ -211,7 +211,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
 
         let provider = GitHubPackageMetadataProvider(authTokens: authTokens, httpClient: httpClient)
         for _ in 0 ... 60 {
-            let metadata = try tsc_await { callback in provider.get(repoURL, callback: callback) }
+            let metadata = try temp_await { callback in provider.get(repoURL, callback: callback) }
             XCTAssertNotNil(metadata)
             XCTAssert(metadata.keywords!.count > 0)
             XCTAssertNotNil(metadata.readmeURL)

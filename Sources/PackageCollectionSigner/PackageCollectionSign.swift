@@ -22,8 +22,6 @@ import Backtrace
 import Basics
 import PackageCollectionsModel
 import PackageCollectionsSigning
-
-import TSCBasic
 import Utilities
 
 @main
@@ -82,7 +80,7 @@ public struct PackageCollectionSign: ParsableCommand {
             let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL,
                                                             observabilityScope: ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope,
                                                             callbackQueue: DispatchQueue.global())
-            let signedCollection = try tsc_await { callback in
+            let signedCollection = try temp_await { callback in
                 signer.sign(collection: collection, certChainPaths: certChainURLs, certPrivateKeyPath: privateKeyURL, certPolicyKey: .default, callback: callback)
             }
 
