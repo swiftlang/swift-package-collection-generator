@@ -19,7 +19,6 @@ import Backtrace
 import Basics
 import PackageCollectionsModel
 import PackageModel
-import TSCBasic
 import TSCUtility
 import Utilities
 
@@ -208,7 +207,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                                   jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
         var additionalMetadata: PackageBasicMetadata?
         do {
-            additionalMetadata = try tsc_await { callback in metadataProvider.get(package.url, callback: callback) }
+            additionalMetadata = try temp_await { callback in metadataProvider.get(package.url, callback: callback) }
         } catch {
             printError("Failed to fetch additional metadata: \(error)")
         }

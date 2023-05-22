@@ -67,7 +67,7 @@ public extension PackageCollectionGeneratorInput {
     struct Package: Equatable, Codable {
         /// The URL of the package. Currently only Git repository URLs are supported.
         public let url: URL
-        
+
         /// The identity of the package if published to registry.
         public let identity: String?
 
@@ -94,7 +94,7 @@ public extension PackageCollectionGeneratorInput {
 
         /// The URL of the package's README.
         public let readmeURL: URL?
-        
+
         public let signer: PackageCollectionModel.V1.Signer?
 
         public init(

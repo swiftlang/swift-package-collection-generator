@@ -19,7 +19,7 @@ import Basics
 @testable import PackageCollectionGenerator
 import PackageCollectionsModel
 @testable import TestUtilities
-import TSCBasic
+import struct TSCBasic.ByteString
 import TSCUtility
 
 final class PackageCollectionGenerateTests: XCTestCase {

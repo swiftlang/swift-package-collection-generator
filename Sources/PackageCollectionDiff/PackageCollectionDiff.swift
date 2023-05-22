@@ -18,7 +18,6 @@ import Foundation
 import Backtrace
 import Basics
 import PackageCollectionsModel
-import TSCBasic
 import Utilities
 
 @main
