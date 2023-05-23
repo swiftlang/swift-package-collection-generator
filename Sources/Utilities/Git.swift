@@ -19,7 +19,7 @@ import TSCUtility
 
 public enum GitUtilities {
     public static func clone(_ repositoryURL: String, to path: AbsolutePath) throws {
-        try ShellUtilities.run(Git.tool, "clone", repositoryURL, path.pathString)
+        try ShellUtilities.run(Git.tool, "clone", repositoryURL, path.pathString, "--recurse-submodules")
     }
 
     public static func fetch(_ repositoryURL: String, at gitDirectoryPath: AbsolutePath) throws {
