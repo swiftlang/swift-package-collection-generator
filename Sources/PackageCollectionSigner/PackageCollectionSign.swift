@@ -77,11 +77,18 @@ public struct PackageCollectionSign: ParsableCommand {
             try localFileSystem.copy(from: rootCertPath, to: tmpDir.appending(component: rootCertFilename))
 
             // Sign the collection
-            let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL,
-                                                            observabilityScope: ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope,
-                                                            callbackQueue: DispatchQueue.global())
+            let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL)
+            let observabilityScope = ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope
             let signedCollection = try temp_await { callback in
-                signer.sign(collection: collection, certChainPaths: certChainURLs, certPrivateKeyPath: privateKeyURL, certPolicyKey: .default, callback: callback)
+                signer.sign(
+                    collection: collection,
+                    certChainPaths: certChainURLs,
+                    certPrivateKeyPath: privateKeyURL,
+                    certPolicyKey: .default,
+                    observabilityScope: observabilityScope,
+                    callbackQueue: DispatchQueue.global(),
+                    callback: callback
+                )
             }
 
             // Make sure the output directory exists
