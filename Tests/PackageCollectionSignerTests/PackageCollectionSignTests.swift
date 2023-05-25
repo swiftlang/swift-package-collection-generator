@@ -29,8 +29,8 @@ final class PackageCollectionSignTests: XCTestCase {
             .stdout.contains("USAGE: package-collection-sign <input-path> <output-path> <private-key-path> <cert-chain-paths> ... [--verbose]"))
     }
 
-    func test_endToEnd() throws {
-        try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
+    func test_endToEnd() async throws {
+        try await withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
             let inputPath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "test.json")
             let outputPath = tmpDir.appending(component: "signed-test.json")
             // These are not actually used since we are using MockPackageCollectionSigner
@@ -46,7 +46,7 @@ final class PackageCollectionSignTests: XCTestCase {
 
             // We don't have real certs so we have to use a mock signer
             let signer = MockPackageCollectionSigner()
-            try cmd._run(signer: signer)
+            try await cmd._run(signer: signer)
 
             let jsonDecoder = JSONDecoder.makeWithDefaults()
 
@@ -59,11 +59,12 @@ final class PackageCollectionSignTests: XCTestCase {
 }
 
 private struct MockPackageCollectionSigner: PackageCollectionSigner {
-    func sign(collection: Model.Collection,
-              certChainPaths: [URL],
-              privateKeyPEM: Data,
-              certPolicyKey: CertificatePolicyKey,
-              callback: @escaping (Result<Model.SignedCollection, Error>) -> Void) {
+    func sign(
+        collection: Model.Collection,
+        certChainPaths: [URL],
+        privateKeyPEM: Data,
+        certPolicyKey: CertificatePolicyKey
+    ) async throws -> Model.SignedCollection {
         let signature = Model.Signature(
             signature: "test signature",
             certificate: Model.Signature.Certificate(
@@ -71,6 +72,6 @@ private struct MockPackageCollectionSigner: PackageCollectionSigner {
                 issuer: Model.Signature.Certificate.Name(userID: nil, commonName: "test issuer", organizationalUnit: "test unit", organization: "test org")
             )
         )
-        callback(.success(Model.SignedCollection(collection: collection, signature: signature)))
+        return Model.SignedCollection(collection: collection, signature: signature)
     }
 }

@@ -25,7 +25,7 @@ import PackageCollectionsSigning
 import Utilities
 
 @main
-public struct PackageCollectionSign: ParsableCommand {
+public struct PackageCollectionSign: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
         abstract: "Sign a package collection."
     )
@@ -49,11 +49,11 @@ public struct PackageCollectionSign: ParsableCommand {
 
     public init() {}
 
-    public func run() throws {
-        try self._run(signer: nil)
+    public func run() async throws {
+        try await self._run(signer: nil)
     }
 
-    internal func _run(signer: PackageCollectionSigner?) throws {
+    internal func _run(signer: PackageCollectionSigner?) async throws {
         Backtrace.install()
 
         guard !self.certChainPaths.isEmpty else {
@@ -69,7 +69,7 @@ public struct PackageCollectionSign: ParsableCommand {
         let privateKeyURL = URL(fileURLWithPath: self.privateKeyPath)
         let certChainURLs: [URL] = try self.certChainPaths.map { try ensureAbsolute(path: $0).asURL }
 
-        try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
+        try await withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
             // The last item in the array is the root certificate and we want to trust it, so here we
             // create a temp directory, copy the root certificate to it, and make it the trustedRootCertsDir.
             let rootCertPath = try AbsolutePath(validating: certChainURLs.last!.path) // !-safe since certChain cannot be empty at this point
@@ -78,11 +78,13 @@ public struct PackageCollectionSign: ParsableCommand {
 
             // Sign the collection
             let signer = signer ?? PackageCollectionSigning(trustedRootCertsDir: tmpDir.asURL,
-                                                            observabilityScope: ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope,
-                                                            callbackQueue: DispatchQueue.global())
-            let signedCollection = try temp_await { callback in
-                signer.sign(collection: collection, certChainPaths: certChainURLs, certPrivateKeyPath: privateKeyURL, certPolicyKey: .default, callback: callback)
-            }
+                                                            observabilityScope: ObservabilitySystem { _, diagnostic in print(diagnostic) }.topScope)
+            let signedCollection = try await signer.sign(
+                collection: collection,
+                certChainPaths: certChainURLs,
+                certPrivateKeyPath: privateKeyURL,
+                certPolicyKey: .default
+            )
 
             // Make sure the output directory exists
             let outputAbsolutePath = try ensureAbsolute(path: self.outputPath)
