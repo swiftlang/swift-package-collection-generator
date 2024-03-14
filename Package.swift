@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "swift-package-collection-generator",
-    platforms: [.macOS(.v12)],
+    platforms: [.macOS(.v13)],
     products: [
         .executable(name: "package-collection-generate", targets: ["PackageCollectionGenerator"]),
         .executable(name: "package-collection-sign", targets: ["PackageCollectionSigner"]),
@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "1.2.2")),
-        .package(url: "https://github.com/apple/swift-package-manager.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-package-manager.git", revision: "82e3974c7714783bab1da11e29d053422fdfba9a"), // 5.10 Release
         .package(url: "https://github.com/swift-server/swift-backtrace.git", .upToNextMajor(from: "1.1.0")),
     ],
     targets: [
