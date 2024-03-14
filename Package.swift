@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "1.2.2")),
-        .package(url: "https://github.com/apple/swift-package-manager.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-package-manager.git", branch: "release/5.10"),
         .package(url: "https://github.com/swift-server/swift-backtrace.git", .upToNextMajor(from: "1.1.0")),
     ],
     targets: [
