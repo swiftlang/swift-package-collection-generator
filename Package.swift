@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "swift-package-collection-generator",
-    platforms: [.macOS(.v12)],
+    platforms: [.macOS(.v13)],
     products: [
         .executable(name: "package-collection-generate", targets: ["PackageCollectionGenerator"]),
         .executable(name: "package-collection-sign", targets: ["PackageCollectionSigner"]),
