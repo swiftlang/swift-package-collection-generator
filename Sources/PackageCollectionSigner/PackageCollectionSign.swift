@@ -53,7 +53,7 @@ public struct PackageCollectionSign: AsyncParsableCommand {
         try await self._run(signer: nil)
     }
 
-    internal func _run(signer: PackageCollectionSigner?) async throws {
+    func _run(signer: PackageCollectionSigner?) async throws {
         Backtrace.install()
 
         guard !self.certChainPaths.isEmpty else {

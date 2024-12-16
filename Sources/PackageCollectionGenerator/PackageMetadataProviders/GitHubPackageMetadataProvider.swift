@@ -34,18 +34,18 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
 
     func get(_ packageURL: URL) async throws -> PackageBasicMetadata {
         try await withCheckedThrowingContinuation { continuation in
-            
+
             guard let baseURL = self.apiURL(packageURL.absoluteString) else {
                 return continuation.resume(throwing: Errors.invalidGitURL(packageURL))
             }
-            
+
             let metadataURL = baseURL
             let readmeURL = baseURL.appendingPathComponent("readme")
             let licenseURL = baseURL.appendingPathComponent("license")
-            
+
             let sync = DispatchGroup()
             let results = ThreadSafeKeyValueStore<URL, Result<HTTPClientResponse, Error>>()
-            
+
             // get the main data
             sync.enter()
             var metadataHeaders = HTTPClientHeaders()
@@ -71,7 +71,7 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
                         results[metadataURL] = .failure(Errors.notFound(metadataURL))
                     case (200, _, _):
                         // if successful, fan out multiple API calls
-                        [readmeURL, licenseURL].forEach { url in
+                        for url in [readmeURL, licenseURL] {
                             sync.enter()
                             var headers = HTTPClientHeaders()
                             headers.add(name: "Accept", value: "application/vnd.github.v3+json")
@@ -86,7 +86,7 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
                     }
                 }
             }
-            
+
             // process results
             sync.notify(queue: self.httpClient.configuration.callbackQueue) {
                 do {
@@ -100,17 +100,17 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
                         guard let metadata = try metadataResponse.decodeBody(GetRepositoryResponse.self, using: self.decoder) else {
                             throw Errors.invalidResponse(metadataURL, "Empty body")
                         }
-                        
+
                         let readme = try results[readmeURL]?.success?.decodeBody(Readme.self, using: self.decoder)
                         let license = try results[licenseURL]?.success?.decodeBody(License.self, using: self.decoder)
-                        
+
                         let model = PackageBasicMetadata(
                             summary: metadata.description,
                             keywords: metadata.topics,
                             readmeURL: readme?.downloadURL,
                             license: license.flatMap { .init(name: $0.license.spdxID, url: $0.downloadURL) }
                         )
-                        
+
                         continuation.resume(returning: model)
                     }
                 } catch {
@@ -120,7 +120,7 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
         }
     }
 
-    internal func apiURL(_ url: String) -> Foundation.URL? {
+    func apiURL(_ url: String) -> Foundation.URL? {
         if let gitURL = GitURL.from(url) {
             return URL(string: "https://\(Self.apiHostPrefix)\(gitURL.host)/repos/\(gitURL.owner)/\(gitURL.repository)")
         }

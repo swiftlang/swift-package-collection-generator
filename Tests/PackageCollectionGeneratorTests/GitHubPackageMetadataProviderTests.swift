@@ -109,7 +109,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         do {
             _ = try await provider.get(repoURL)
             XCTFail("should throw error")
-        } catch let error {
+        } catch {
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .invalidAuthToken(apiURL))
         }
     }
@@ -131,8 +131,8 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         do {
             _ = try await provider.get(repoURL)
             XCTFail("should throw error")
-        } catch let error {
-             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .notFound(apiURL))
+        } catch {
+            XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .notFound(apiURL))
         }
     }
 
@@ -186,7 +186,7 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         do {
             _ = try await provider.get(repoURL)
             XCTFail("should throw error")
-        } catch let error {
+        } catch {
             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .permissionDenied(apiURL))
         }
     }
@@ -197,8 +197,8 @@ final class GitHubPackageMetadataProviderTests: XCTestCase {
         do {
             _ = try await provider.get(repoURL)
             XCTFail("should throw error")
-        } catch let error {
-             XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .invalidGitURL(repoURL))
+        } catch {
+            XCTAssertEqual(error as? GitHubPackageMetadataProvider.Errors, .invalidGitURL(repoURL))
         }
     }
 

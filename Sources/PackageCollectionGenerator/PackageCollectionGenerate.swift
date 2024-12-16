@@ -133,7 +133,7 @@ public struct PackageCollectionGenerate: AsyncParsableCommand {
         } catch {
             outputAbsolutePath = try AbsolutePath(
                 validating: self.outputPath,
-                relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+                relativeTo: AbsolutePath(validating: FileManager.default.currentDirectoryPath)
             )
         }
         let outputDirectory = outputAbsolutePath.parentDirectory
@@ -159,7 +159,7 @@ public struct PackageCollectionGenerate: AsyncParsableCommand {
             } catch {
                 workingDirectoryAbsolutePath = try AbsolutePath(
                     validating: workingDirectoryPath,
-                    relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+                    relativeTo: AbsolutePath(validating: FileManager.default.currentDirectoryPath)
                 )
             }
 
@@ -269,8 +269,7 @@ public struct PackageCollectionGenerate: AsyncParsableCommand {
                                   excludedTargets: Set<String>,
                                   signer: PackageCollectionModel.V1.Signer?,
                                   gitDirectoryPath: AbsolutePath,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version
-    {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
@@ -302,8 +301,7 @@ public struct PackageCollectionGenerate: AsyncParsableCommand {
     private func defaultManifest(excludedProducts: Set<String>,
                                  excludedTargets: Set<String>,
                                  gitDirectoryPath: AbsolutePath,
-                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest
-    {
+                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest {
         // Run `swift package describe --type json` to generate JSON package description
         let packageDescriptionJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package describe --type json")
         let packageDescription = try jsonDecoder.decode(PackageDescription.self, from: packageDescriptionJSON.data(using: .utf8) ?? Data())
