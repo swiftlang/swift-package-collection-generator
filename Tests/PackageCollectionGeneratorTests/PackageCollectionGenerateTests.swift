@@ -31,8 +31,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
         XCTAssert(help.contains(expectedUsageDescription), "Help did not contain expected usage description, instead it had:\n\(help)")
     }
 
-    func test_endToEnd() throws {
-        try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
+    func test_endToEnd() async throws {
+        try await withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
             // TestRepoOne has tags [0.1.0]
             let repoOneArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoOneArchivePath.pathString])
@@ -210,7 +210,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                     workingDirectoryPath.pathString,
                 ].compactMap { $0 }
                 let cmd = try PackageCollectionGenerate.parse(flags)
-                try cmd.run()
+                try await cmd.run()
 
                 let jsonDecoder = JSONDecoder.makeWithDefaults()
 
@@ -228,8 +228,8 @@ final class PackageCollectionGenerateTests: XCTestCase {
         }
     }
 
-    func test_excludedVersions() throws {
-        try withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
+    func test_excludedVersions() async throws {
+        try await withTemporaryDirectory(prefix: "PackageCollectionToolTests", removeTreeOnDeinit: true) { tmpDir in
             // TestRepoOne has tags [0.1.0]
             let repoOneArchivePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "TestRepoOne.tgz")
             try systemQuietly(["tar", "-x", "-v", "-C", tmpDir.pathString, "-f", repoOneArchivePath.pathString])
@@ -273,7 +273,7 @@ final class PackageCollectionGenerateTests: XCTestCase {
                 "--working-directory-path",
                 workingDirectoryPath.pathString,
             ])
-            try cmd.run()
+            try await cmd.run()
 
             let expectedPackages = [
                 Model.Collection.Package(

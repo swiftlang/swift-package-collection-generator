@@ -32,87 +32,90 @@ struct GitHubPackageMetadataProvider: PackageMetadataProvider {
         self.decoder = JSONDecoder.makeWithDefaults()
     }
 
-    func get(_ packageURL: URL, callback: @escaping (Result<PackageBasicMetadata, Error>) -> Void) {
-        guard let baseURL = self.apiURL(packageURL.absoluteString) else {
-            return callback(.failure(Errors.invalidGitURL(packageURL)))
-        }
-
-        let metadataURL = baseURL
-        let readmeURL = baseURL.appendingPathComponent("readme")
-        let licenseURL = baseURL.appendingPathComponent("license")
-
-        let sync = DispatchGroup()
-        let results = ThreadSafeKeyValueStore<URL, Result<HTTPClientResponse, Error>>()
-
-        // get the main data
-        sync.enter()
-        var metadataHeaders = HTTPClientHeaders()
-        metadataHeaders.add(name: "Accept", value: "application/vnd.github.mercy-preview+json")
-        let metadataOptions = self.makeRequestOptions(validResponseCodes: [200, 401, 403, 404])
-        let hasAuthorization = metadataOptions.authorizationProvider?(metadataURL) != nil
-        self.httpClient.get(metadataURL, headers: metadataHeaders, options: metadataOptions) { result in
-            defer { sync.leave() }
-            results[metadataURL] = result
-            if case .success(let response) = result {
-                let apiLimit = response.headers.get("X-RateLimit-Limit").first.flatMap(Int.init) ?? -1
-                let apiRemaining = response.headers.get("X-RateLimit-Remaining").first.flatMap(Int.init) ?? -1
-                switch (response.statusCode, hasAuthorization, apiRemaining) {
-                case (_, _, 0):
-                    results[metadataURL] = .failure(Errors.apiLimitsExceeded(metadataURL, apiLimit, apiRemaining))
-                case (401, true, _):
-                    results[metadataURL] = .failure(Errors.invalidAuthToken(metadataURL))
-                case (401, false, _):
-                    results[metadataURL] = .failure(Errors.permissionDenied(metadataURL))
-                case (403, _, _):
-                    results[metadataURL] = .failure(Errors.permissionDenied(metadataURL))
-                case (404, _, _):
-                    results[metadataURL] = .failure(Errors.notFound(metadataURL))
-                case (200, _, _):
-                    // if successful, fan out multiple API calls
-                    [readmeURL, licenseURL].forEach { url in
-                        sync.enter()
-                        var headers = HTTPClientHeaders()
-                        headers.add(name: "Accept", value: "application/vnd.github.v3+json")
-                        let options = self.makeRequestOptions(validResponseCodes: [200])
-                        self.httpClient.get(url, headers: headers, options: options) { result in
-                            defer { sync.leave() }
-                            results[url] = result
+    func get(_ packageURL: URL) async throws -> PackageBasicMetadata {
+        try await withCheckedThrowingContinuation { continuation in
+            
+            guard let baseURL = self.apiURL(packageURL.absoluteString) else {
+                return continuation.resume(throwing: Errors.invalidGitURL(packageURL))
+            }
+            
+            let metadataURL = baseURL
+            let readmeURL = baseURL.appendingPathComponent("readme")
+            let licenseURL = baseURL.appendingPathComponent("license")
+            
+            let sync = DispatchGroup()
+            let results = ThreadSafeKeyValueStore<URL, Result<HTTPClientResponse, Error>>()
+            
+            // get the main data
+            sync.enter()
+            var metadataHeaders = HTTPClientHeaders()
+            metadataHeaders.add(name: "Accept", value: "application/vnd.github.mercy-preview+json")
+            let metadataOptions = self.makeRequestOptions(validResponseCodes: [200, 401, 403, 404])
+            let hasAuthorization = metadataOptions.authorizationProvider?(metadataURL) != nil
+            self.httpClient.get(metadataURL, headers: metadataHeaders, options: metadataOptions) { result in
+                defer { sync.leave() }
+                results[metadataURL] = result
+                if case .success(let response) = result {
+                    let apiLimit = response.headers.get("X-RateLimit-Limit").first.flatMap(Int.init) ?? -1
+                    let apiRemaining = response.headers.get("X-RateLimit-Remaining").first.flatMap(Int.init) ?? -1
+                    switch (response.statusCode, hasAuthorization, apiRemaining) {
+                    case (_, _, 0):
+                        results[metadataURL] = .failure(Errors.apiLimitsExceeded(metadataURL, apiLimit, apiRemaining))
+                    case (401, true, _):
+                        results[metadataURL] = .failure(Errors.invalidAuthToken(metadataURL))
+                    case (401, false, _):
+                        results[metadataURL] = .failure(Errors.permissionDenied(metadataURL))
+                    case (403, _, _):
+                        results[metadataURL] = .failure(Errors.permissionDenied(metadataURL))
+                    case (404, _, _):
+                        results[metadataURL] = .failure(Errors.notFound(metadataURL))
+                    case (200, _, _):
+                        // if successful, fan out multiple API calls
+                        [readmeURL, licenseURL].forEach { url in
+                            sync.enter()
+                            var headers = HTTPClientHeaders()
+                            headers.add(name: "Accept", value: "application/vnd.github.v3+json")
+                            let options = self.makeRequestOptions(validResponseCodes: [200])
+                            self.httpClient.get(url, headers: headers, options: options) { result in
+                                defer { sync.leave() }
+                                results[url] = result
+                            }
                         }
+                    default:
+                        results[metadataURL] = .failure(Errors.invalidResponse(metadataURL, "Invalid status code: \(response.statusCode)"))
                     }
-                default:
-                    results[metadataURL] = .failure(Errors.invalidResponse(metadataURL, "Invalid status code: \(response.statusCode)"))
                 }
             }
-        }
-
-        // process results
-        sync.notify(queue: self.httpClient.configuration.callbackQueue) {
-            do {
-                // check for main request error state
-                switch results[metadataURL] {
-                case .none:
-                    throw Errors.invalidResponse(metadataURL, "Response missing")
-                case .some(.failure(let error)):
-                    throw error
-                case .some(.success(let metadataResponse)):
-                    guard let metadata = try metadataResponse.decodeBody(GetRepositoryResponse.self, using: self.decoder) else {
-                        throw Errors.invalidResponse(metadataURL, "Empty body")
+            
+            // process results
+            sync.notify(queue: self.httpClient.configuration.callbackQueue) {
+                do {
+                    // check for main request error state
+                    switch results[metadataURL] {
+                    case .none:
+                        throw Errors.invalidResponse(metadataURL, "Response missing")
+                    case .some(.failure(let error)):
+                        throw error
+                    case .some(.success(let metadataResponse)):
+                        guard let metadata = try metadataResponse.decodeBody(GetRepositoryResponse.self, using: self.decoder) else {
+                            throw Errors.invalidResponse(metadataURL, "Empty body")
+                        }
+                        
+                        let readme = try results[readmeURL]?.success?.decodeBody(Readme.self, using: self.decoder)
+                        let license = try results[licenseURL]?.success?.decodeBody(License.self, using: self.decoder)
+                        
+                        let model = PackageBasicMetadata(
+                            summary: metadata.description,
+                            keywords: metadata.topics,
+                            readmeURL: readme?.downloadURL,
+                            license: license.flatMap { .init(name: $0.license.spdxID, url: $0.downloadURL) }
+                        )
+                        
+                        continuation.resume(returning: model)
                     }
-
-                    let readme = try results[readmeURL]?.success?.decodeBody(Readme.self, using: self.decoder)
-                    let license = try results[licenseURL]?.success?.decodeBody(License.self, using: self.decoder)
-
-                    let model = PackageBasicMetadata(
-                        summary: metadata.description,
-                        keywords: metadata.topics,
-                        readmeURL: readme?.downloadURL,
-                        license: license.flatMap { .init(name: $0.license.spdxID, url: $0.downloadURL) }
-                    )
-
-                    callback(.success(model))
+                } catch {
+                    continuation.resume(throwing: error)
                 }
-            } catch {
-                return callback(.failure(error))
             }
         }
     }
