@@ -17,7 +17,7 @@ import Foundation
 import PackageCollectionsModel
 
 protocol PackageMetadataProvider {
-    func get(_ packageURL: URL, callback: @escaping (Result<PackageBasicMetadata, Error>) -> Void)
+    func get(_ packageURL: URL) async throws -> PackageBasicMetadata
 }
 
 enum AuthTokenType: Hashable, CustomStringConvertible {

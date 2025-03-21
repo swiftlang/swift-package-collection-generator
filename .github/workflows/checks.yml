@@ -1,0 +1,33 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+concurrency:
+  group: checks-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "Test on macOS"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: swift test
+
+  test_linux:
+    name: "Test on Linux"
+    runs-on: ubuntu-latest
+    container: swift:6.0.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SQLite
+        run: |
+          apt-get update
+          apt-get install -y libsqlite3-dev sqlite3
+      - name: Test
+        run: swift test

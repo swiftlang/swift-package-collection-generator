@@ -23,7 +23,7 @@ import TSCUtility
 import Utilities
 
 @main
-public struct PackageCollectionGenerate: ParsableCommand {
+public struct PackageCollectionGenerate: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
         abstract: "Generate a package collection from the given list of packages."
     )
@@ -65,7 +65,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     public init() {}
 
-    public func run() throws {
+    public func run() async throws {
         Backtrace.install()
 
         // Parse auth tokens
@@ -91,20 +91,21 @@ public struct PackageCollectionGenerate: ParsableCommand {
         let githubPackageMetadataProvider = GitHubPackageMetadataProvider(authTokens: authTokens)
 
         // Generate metadata for each package
-        let packages: [Model.Collection.Package] = input.packages.compactMap { package in
+        var packages: [Model.Collection.Package] = []
+        for package in input.packages {
             do {
-                let packageMetadata = try self.generateMetadata(for: package, metadataProvider: githubPackageMetadataProvider, jsonDecoder: jsonDecoder)
+                let packageMetadata = try await self.generateMetadata(for: package, metadataProvider: githubPackageMetadataProvider, jsonDecoder: jsonDecoder)
                 print("\(packageMetadata)", verbose: self.verbose)
 
                 guard !packageMetadata.versions.isEmpty else {
                     printError("Skipping package \(package.url) because it does not have any valid versions.")
-                    return nil
+                    continue
                 }
 
-                return packageMetadata
+                packages.append(packageMetadata)
             } catch {
                 printError("Failed to generate metadata for package \(package.url): \(error)")
-                return nil
+                continue
             }
         }
 
@@ -132,7 +133,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
         } catch {
             outputAbsolutePath = try AbsolutePath(
                 validating: self.outputPath,
-                relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+                relativeTo: AbsolutePath(validating: FileManager.default.currentDirectoryPath)
             )
         }
         let outputDirectory = outputAbsolutePath.parentDirectory
@@ -147,7 +148,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
 
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
+                                  jsonDecoder: JSONDecoder) async throws -> Model.Collection.Package {
         print("Processing Package(\(package.url))", inColor: .cyan, verbose: self.verbose)
 
         // Try to locate the directory where the repository might have been cloned to previously
@@ -158,7 +159,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
             } catch {
                 workingDirectoryAbsolutePath = try AbsolutePath(
                     validating: workingDirectoryPath,
-                    relativeTo: try AbsolutePath(validating: FileManager.default.currentDirectoryPath)
+                    relativeTo: AbsolutePath(validating: FileManager.default.currentDirectoryPath)
                 )
             }
 
@@ -178,7 +179,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                     try GitUtilities.clone(repositoryURL, to: gitDirectoryPath)
                 }
 
-                return try self.generateMetadata(
+                return try await self.generateMetadata(
                     for: package,
                     gitDirectoryPath: gitDirectoryPath,
                     metadataProvider: metadataProvider,
@@ -188,11 +189,11 @@ public struct PackageCollectionGenerate: ParsableCommand {
         }
 
         // Fallback to tmp directory if we cannot use the working directory for some reason or it's unspecified
-        return try withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
+        return try await withTemporaryDirectory(removeTreeOnDeinit: true) { tmpDir in
             // Clone the package repository
             try GitUtilities.clone(package.url.absoluteString, to: tmpDir)
 
-            return try self.generateMetadata(
+            return try await self.generateMetadata(
                 for: package,
                 gitDirectoryPath: tmpDir,
                 metadataProvider: metadataProvider,
@@ -204,10 +205,10 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func generateMetadata(for package: PackageCollectionGeneratorInput.Package,
                                   gitDirectoryPath: AbsolutePath,
                                   metadataProvider: PackageMetadataProvider,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package {
+                                  jsonDecoder: JSONDecoder) async throws -> Model.Collection.Package {
         var additionalMetadata: PackageBasicMetadata?
         do {
-            additionalMetadata = try temp_await { callback in metadataProvider.get(package.url, callback: callback) }
+            additionalMetadata = try await metadataProvider.get(package.url)
         } catch {
             printError("Failed to fetch additional metadata: \(error)")
         }
@@ -268,8 +269,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
                                   excludedTargets: Set<String>,
                                   signer: PackageCollectionModel.V1.Signer?,
                                   gitDirectoryPath: AbsolutePath,
-                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version
-    {
+                                  jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version {
         // Check out the git tag
         print("Checking out version \(version)", inColor: .yellow, verbose: self.verbose)
         try ShellUtilities.run(Git.tool, "-C", gitDirectoryPath.pathString, "checkout", version)
@@ -301,8 +301,7 @@ public struct PackageCollectionGenerate: ParsableCommand {
     private func defaultManifest(excludedProducts: Set<String>,
                                  excludedTargets: Set<String>,
                                  gitDirectoryPath: AbsolutePath,
-                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest
-    {
+                                 jsonDecoder: JSONDecoder) throws -> Model.Collection.Package.Version.Manifest {
         // Run `swift package describe --type json` to generate JSON package description
         let packageDescriptionJSON = try ShellUtilities.run(ShellUtilities.shell, "-c", "cd \(gitDirectoryPath) && swift package describe --type json")
         let packageDescription = try jsonDecoder.decode(PackageDescription.self, from: packageDescriptionJSON.data(using: .utf8) ?? Data())

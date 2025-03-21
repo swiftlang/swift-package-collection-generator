@@ -48,7 +48,7 @@ class PackageCollectionGeneratorInputTests: XCTestCase {
         let inputFilePath = try AbsolutePath(validating: #file).parentDirectory.appending(components: "Inputs", "test-input.json")
         let input = try JSONDecoder().decode(
             PackageCollectionGeneratorInput.self,
-            from: Data(try localFileSystem.readFileContents(inputFilePath).contents)
+            from: Data(localFileSystem.readFileContents(inputFilePath).contents)
         )
 
         XCTAssertEqual(expectedInput, input)
